@@ -1,24 +1,42 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Redirect, router } from "expo-router";
 import CustomButton from "../../components/CustomButton";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext"; // replace with the actual path to UserContext
 
-const Goal = () => {
+const Gender = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useContext(UserContext);
+  const [currentPage, setCurrentPage] = useState(4);
+  const route = useRoute();
 
-  const handleGoalSelect = (goal) => {
-    setUserInfo({
+  useEffect(() => {
+    console.log(route.params.goal);
+    console.log(route.params.weight);
+    console.log(route.params.unit);
+    console.log(route.params.goalweight);
+    console.log(route.params.goalweightUnit);
+  }, []);
+
+  const handleGenderSelect = (gender) => {
+    const updatedUserInfo = {
       ...userInfo,
-      goal: goal,
+      gender: gender,
+    };
+    setUserInfo(updatedUserInfo);
+    // navigate to the next page and pass the values
+    navigation.navigate("dof", {
+      goal: updatedUserInfo.goal,
+      weight: updatedUserInfo.weight,
+      unit: updatedUserInfo.currentWeightUnit, // Changed from unit to currentWeightUnit
+      goalweight: updatedUserInfo.goalweight,
+      goalweightUnit: updatedUserInfo.goalweightUnit,
+      gender: gender,
     });
-    navigation.navigate("current-weight", { goal: goal });
   };
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
@@ -42,7 +60,7 @@ const Goal = () => {
                 <View
                   key={i}
                   className={`h-3 w-7 m-1 ${
-                    i === 0
+                    i < currentPage
                       ? "bg-secondary"
                       : "bg-primary border-2 border-secondary"
                   }`}
@@ -51,21 +69,16 @@ const Goal = () => {
             </View>
           </View>
           <Text className="text-2xl font-jbold my-10 text-center">
-            What goal do you have in mind?
+            What sex should we use to calculate your result?
           </Text>
           <CustomButton
-            title="Gain weight"
-            handlePress={() => handleGoalSelect("gain_weight")}
+            title="Male"
+            handlePress={() => handleGenderSelect("male")}
             containerStyles="mt-10"
           />
           <CustomButton
-            title="Maintain weight"
-            handlePress={() => handleGoalSelect("maintain_weight")}
-            containerStyles="mt-10"
-          />
-          <CustomButton
-            title="Lose weight"
-            handlePress={() => handleGoalSelect("lose_weight")}
+            title="Female"
+            handlePress={() => handleGenderSelect("female")}
             containerStyles="mt-10"
           />
         </View>
@@ -74,4 +87,4 @@ const Goal = () => {
   );
 };
 
-export default Goal;
+export default Gender;

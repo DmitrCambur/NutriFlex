@@ -13,10 +13,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
 
-const GoalWeight = () => {
-  const [goalWeight, setGoalWeight] = useState("");
-  const [unit, setUnit] = useState("kg");
-  const [currentPage, setCurrentPage] = useState(3); // Assuming this is the second page
+const Height = () => {
+  const [heightCm, setHeightCm] = useState("");
+  const [heightFtIn, setHeightFtIn] = useState("");
+  const [unit, setUnit] = useState("cm");
+  const [currentPage, setCurrentPage] = useState(7); // Assuming this is the second page
   const navigation = useNavigation();
   const route = useRoute();
   const [userInfo, setUserInfo] = useContext(UserContext);
@@ -24,66 +25,65 @@ const GoalWeight = () => {
   useEffect(() => {
     console.log(route.params.goal);
     console.log(route.params.weight);
-    console.log(route.params.currentWeightUnit);
+    console.log(route.params.unit);
+    console.log(route.params.goalweight);
+    console.log(route.params.goalweightUnit);
+    console.log(route.params.gender);
+    console.log(route.params.dateOfBirth);
   }, []);
-
   const navigateToNextPage = () => {
-    if (goalWeight) {
-      const updatedUserInfo = {
-        ...userInfo,
-        goalweight: goalWeight,
-        goalweightUnit: unit,
-        unit: userInfo.currentWeightUnit, // Changed from unit to userInfo.currentWeightUnit
-      };
-      setUserInfo(updatedUserInfo);
-
-      navigation.navigate("gender", {
-        goal: updatedUserInfo.goal,
-        weight: updatedUserInfo.weight,
-        unit: userInfo.currentWeightUnit, // Changed from unit to userInfo.currentWeightUnit
-        goalweight: goalWeight,
-        goalweightUnit: unit,
+    setUserInfo({
+      ...userInfo,
+      height: unit === "cm" ? heightCm : heightFtIn,
+      heightUnit: unit,
+    });
+    if (unit === "cm" ? heightCm : heightFtIn) {
+      navigation.navigate("ethnicity", {
+        goal: userInfo.goal,
+        weight: userInfo.weight,
+        unit: userInfo.unit,
+        goalweight: userInfo.goalweight,
+        goalweightUnit: userInfo.goalweightUnit,
+        gender: userInfo.gender,
+        dateOfBirth: userInfo.dateOfBirth,
+        height: unit === "cm" ? heightCm : heightFtIn,
+        heightUnit: unit,
       });
     } else {
-      alert("Please enter your weight");
+      alert("Please enter your height");
     }
   };
 
-  const convertWeight = (newUnit) => {
-    let convertedWeight = parseFloat(goalWeight);
-    if (isNaN(convertedWeight)) {
-      // If the weight is not a number, don't convert it
-      return;
+  const handleUnitChange = (newUnit) => {
+    if (newUnit === "cm") {
+      const [feet, inches] = heightFtIn.split("/").map(Number);
+      const convertedHeight = feet * 30.48 + inches * 2.54;
+      setHeightCm(convertedHeight.toFixed(2));
+    } else if (newUnit === "ft/in") {
+      const totalInches = heightCm / 2.54;
+      const feet = Math.floor(totalInches / 12);
+      const inches = Math.round(totalInches % 12);
+      setHeightFtIn(`${feet}/${inches}`);
     }
-
-    // Convert the weight to the new unit
-    switch (newUnit) {
-      case "kg":
-        if (unit === "lbs") {
-          convertedWeight /= 2.2046;
-        } else if (unit === "st") {
-          convertedWeight *= 6.3503;
-        }
-        break;
-      case "lbs":
-        if (unit === "kg") {
-          convertedWeight *= 2.2046;
-        } else if (unit === "st") {
-          convertedWeight *= 14;
-        }
-        break;
-      case "st":
-        if (unit === "kg") {
-          convertedWeight /= 6.3503;
-        } else if (unit === "lbs") {
-          convertedWeight /= 14;
-        }
-        break;
-    }
-
-    // Update the weight and unit
-    setGoalWeight(convertedWeight.toFixed(2)); // Changed setWeight to setGoalWeight
     setUnit(newUnit);
+  };
+
+  const convertHeight = (newUnit, height) => {
+    let convertedHeight;
+
+    if (newUnit === "cm") {
+      // Convert from ft/in to cm
+      const [feet, inches] = height.split("/").map(Number);
+      convertedHeight = feet * 30.48 + inches * 2.54;
+    } else if (newUnit === "ft/in") {
+      // Convert from cm to ft/in
+      const totalInches = height / 2.54;
+      const feet = Math.floor(totalInches / 12);
+      const inches = Math.round(totalInches % 12);
+      convertedHeight = `${feet}/${inches}`;
+    }
+
+    return convertedHeight;
   };
 
   return (
@@ -117,16 +117,16 @@ const GoalWeight = () => {
               ))}
             </View>
           </View>
-          <Text className="text-2xl font-jbold my-10 text-center h-15">
-            What's your current weight goal?
+          <Text className="text-2xl font-jbold my-10 text-center">
+            What's your current height?
           </Text>
           <View className="flex-1 justify-center w-full px-10">
             <View className="flex-row border border-secondary mb-5 py-4">
               <TextInput
                 className="flex-1 h-15 text-center font-jbold text-4xl"
                 keyboardType="numeric"
-                value={goalWeight}
-                onChangeText={setGoalWeight}
+                value={unit === "cm" ? heightCm : heightFtIn}
+                onChangeText={unit === "cm" ? setHeightCm : setHeightFtIn}
                 style={{ textAlign: "center" }}
               />
               <Text
@@ -139,44 +139,30 @@ const GoalWeight = () => {
             <View className="flex-row mb-5 justify-center">
               <TouchableOpacity
                 className="mx-0 border border-secondary"
-                onPress={() => convertWeight("kg")}
+                onPress={() => handleUnitChange("cm")}
               >
                 <Text
                   className={
-                    unit === "kg"
-                      ? "font-jlight bg-secondary text-primary py-3 px-8 text-2xl"
-                      : "font-jlight py-3 px-8 text-2xl"
+                    unit === "cm"
+                      ? "font-jlight bg-secondary text-primary py-3 px-12 text-2xl"
+                      : "font-jlight py-3 px-12 text-2xl"
                   }
                 >
-                  kg
+                  cm
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="mx-0 border border-secondary"
-                onPress={() => convertWeight("lbs")}
+                onPress={() => handleUnitChange("ft/in")}
               >
                 <Text
                   className={
-                    unit === "lbs"
-                      ? "font-jlight bg-secondary text-primary py-3 px-8 text-2xl"
-                      : "font-jlight py-3 px-8 text-2xl"
+                    unit === "ft/in"
+                      ? "font-jlight bg-secondary text-primary py-3 px-12 text-2xl "
+                      : "font-jlight py-3 px-12 text-2xl"
                   }
                 >
-                  lbs
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="mx-0 border border-secondary"
-                onPress={() => convertWeight("st")}
-              >
-                <Text
-                  className={
-                    unit === "st"
-                      ? "font-jlight bg-secondary text-primary py-3 px-8 text-2xl "
-                      : "font-jlight py-3 px-8 text-2xl"
-                  }
-                >
-                  st
+                  ft/in
                 </Text>
               </TouchableOpacity>
             </View>
@@ -188,4 +174,4 @@ const GoalWeight = () => {
   );
 };
 
-export default GoalWeight;
+export default Height;

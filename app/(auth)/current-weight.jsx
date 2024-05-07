@@ -13,36 +13,28 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
 
-const GoalWeight = () => {
-  const [goalWeight, setGoalWeight] = useState("");
+const CurrentWeight = () => {
+  const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState("kg");
-  const [currentPage, setCurrentPage] = useState(3); // Assuming this is the second page
+  const [currentPage, setCurrentPage] = useState(2); // Assuming this is the second page
   const navigation = useNavigation();
   const route = useRoute();
   const [userInfo, setUserInfo] = useContext(UserContext);
 
   useEffect(() => {
     console.log(route.params.goal);
-    console.log(route.params.weight);
-    console.log(route.params.currentWeightUnit);
   }, []);
-
   const navigateToNextPage = () => {
-    if (goalWeight) {
-      const updatedUserInfo = {
-        ...userInfo,
-        goalweight: goalWeight,
-        goalweightUnit: unit,
-        unit: userInfo.currentWeightUnit, // Changed from unit to userInfo.currentWeightUnit
-      };
-      setUserInfo(updatedUserInfo);
-
-      navigation.navigate("gender", {
-        goal: updatedUserInfo.goal,
-        weight: updatedUserInfo.weight,
-        unit: userInfo.currentWeightUnit, // Changed from unit to userInfo.currentWeightUnit
-        goalweight: goalWeight,
-        goalweightUnit: unit,
+    setUserInfo({
+      ...userInfo,
+      weight: weight,
+      currentWeightUnit: unit, // Changed from unit to currentWeightUnit
+    });
+    if (weight) {
+      navigation.navigate("goalweight", {
+        goal: userInfo.goal,
+        weight: weight,
+        currentWeightUnit: unit, // Changed from unit to currentWeightUnit
       });
     } else {
       alert("Please enter your weight");
@@ -50,7 +42,7 @@ const GoalWeight = () => {
   };
 
   const convertWeight = (newUnit) => {
-    let convertedWeight = parseFloat(goalWeight);
+    let convertedWeight = parseFloat(weight);
     if (isNaN(convertedWeight)) {
       // If the weight is not a number, don't convert it
       return;
@@ -82,7 +74,7 @@ const GoalWeight = () => {
     }
 
     // Update the weight and unit
-    setGoalWeight(convertedWeight.toFixed(2)); // Changed setWeight to setGoalWeight
+    setWeight(convertedWeight.toFixed(2));
     setUnit(newUnit);
   };
 
@@ -118,15 +110,15 @@ const GoalWeight = () => {
             </View>
           </View>
           <Text className="text-2xl font-jbold my-10 text-center h-15">
-            What's your current weight goal?
+            What's your current weight?
           </Text>
           <View className="flex-1 justify-center w-full px-10">
             <View className="flex-row border border-secondary mb-5 py-4">
               <TextInput
                 className="flex-1 h-15 text-center font-jbold text-4xl"
                 keyboardType="numeric"
-                value={goalWeight}
-                onChangeText={setGoalWeight}
+                value={weight}
+                onChangeText={setWeight}
                 style={{ textAlign: "center" }}
               />
               <Text
@@ -188,4 +180,4 @@ const GoalWeight = () => {
   );
 };
 
-export default GoalWeight;
+export default CurrentWeight;

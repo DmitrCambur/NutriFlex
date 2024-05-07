@@ -13,7 +13,37 @@ const AuthLayout = () => {
           }}
         />
         <Stack.Screen
+          name="current-weight"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="goalweight"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="gender"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="dof"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="height"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ethnicity"
           options={{
             headerShown: false,
           }}
