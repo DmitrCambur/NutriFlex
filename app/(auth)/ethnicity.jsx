@@ -32,6 +32,7 @@ const Ethnicity = () => {
     console.log(route.params.height);
     console.log(route.params.heightUnit);
   }, []);
+
   const navigateToNextPage = () => {
     const updatedUserInfo = {
       ...userInfo,
@@ -39,18 +40,7 @@ const Ethnicity = () => {
     };
     setUserInfo(updatedUserInfo);
     if (selectedEthnicity) {
-      navigation.navigate("sign-up", {
-        goal: updatedUserInfo.goal,
-        weight: updatedUserInfo.weight,
-        unit: updatedUserInfo.unit,
-        goalweight: updatedUserInfo.goalweight,
-        goalweightUnit: updatedUserInfo.goalweightUnit,
-        gender: updatedUserInfo.gender,
-        dateOfBirth: updatedUserInfo.dateOfBirth,
-        height: updatedUserInfo.height, // added this
-        heightUnit: updatedUserInfo.heightUnit, // and this
-        ethnicity: selectedEthnicity,
-      });
+      navigation.navigate("sign-up", updatedUserInfo);
     } else {
       alert("Please select your ethnicity");
     }

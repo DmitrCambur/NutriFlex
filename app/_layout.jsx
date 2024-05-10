@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import UserProvider from "../components/UserProvider";
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import GlobalProvider from "../context/GlobalProvider";
 SplashScreen.preventAutoHideAsync();
 
 const RootLayoot = () => {
@@ -29,12 +29,19 @@ const RootLayoot = () => {
     return null;
   }
   return (
-    <UserProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack>
-    </UserProvider>
+    <GlobalProvider>
+      <UserProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="search/[query]"
+            options={{ headerShown: false }}
+          />
+        </Stack>
+      </UserProvider>
+    </GlobalProvider>
   );
 };
 
