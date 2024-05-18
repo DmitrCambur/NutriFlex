@@ -31,12 +31,22 @@ const SignUp = () => {
     try {
       const { weightGoal, currentWeight, currentWeightUnit, ...restUserInfo } =
         route.params;
-      const userInfo = {
+      let userInfo = {
         ...restUserInfo,
-        height: parseInt(restUserInfo.height, 10),
         goalweight: parseInt(restUserInfo.goalweight, 10),
         weight: parseInt(restUserInfo.weight, 10),
       };
+
+      // Check if height is in ft/in format
+      if (restUserInfo.height.includes("/")) {
+        const [feet, inches] = restUserInfo.height.split("/");
+        // Convert height to centimeters and round to nearest integer
+        userInfo.height = Math.round((feet * 12 + parseInt(inches, 10)) * 2.54);
+        userInfo.heightUnit = "cm";
+      } else {
+        userInfo.height = parseInt(restUserInfo.height, 10);
+      }
+
       const filteredUserInfo = Object.fromEntries(
         Object.entries(userInfo).filter(([key, value]) => value && value !== 0)
       );
@@ -53,10 +63,15 @@ const SignUp = () => {
         filteredUserInfo
       );
       setUser(result);
+      console.log("User created:", result);
       setGlobalUser(result);
       setIsLogged(true);
 
-      router.replace("/diary");
+      // Reset the navigation stack and navigate to the main part of the application
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "results", params: { userInfo: result } }],
+      });
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
