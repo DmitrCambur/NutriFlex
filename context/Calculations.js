@@ -35,6 +35,11 @@ export const calculateDailyIntake = (userInfo) => {
   if (heightUnit === "in") {
     height = height * 2.54; // Convert inches to centimeters
   }
+  const weightDifferenceInKg = Math.abs(goalweight - weight);
+  const weeksToGoal = weightDifferenceInKg / 0.5; // 0.5kg per week
+  const goalDate = new Date();
+  const daysToGoal = Math.round(weeksToGoal * 7); // Round to the nearest whole number
+  goalDate.setDate(goalDate.getDate() + daysToGoal); // Add the number of days to the current date
 
   const heightInMeters = height / 100;
   const age = calculateAge(dateOfBirth);
@@ -71,12 +76,15 @@ export const calculateDailyIntake = (userInfo) => {
   if (heightUnit === "in") {
     height = height / 2.54; // Convert centimeters back to inches
   }
-
+  const goalDateFormatted = `${goalDate.getFullYear()}-${String(
+    goalDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(goalDate.getDate()).padStart(2, "0")}`;
   return {
     daily_calories: dailyCalorieRequirement,
     daily_protein: protein,
     daily_fat: fat,
     daily_carbs: carbs,
+    goaldate: goalDateFormatted,
   };
 };
 
