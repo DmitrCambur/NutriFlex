@@ -125,7 +125,11 @@ const Diary = () => {
             <View className="items-center">
               <Text className="font-jbold text-l">PROTEIN</Text>
               <Progress.Bar
-                progress={userData.protein / userData.daily_protein}
+                progress={
+                  userData.protein && userData.daily_protein
+                    ? userData.protein / userData.daily_protein
+                    : 0
+                }
                 width={100}
                 color={"#191919"}
                 borderWidth={1}
@@ -142,7 +146,11 @@ const Diary = () => {
             <View className="items-center">
               <Text className="font-jbold text-l">CARBS</Text>
               <Progress.Bar
-                progress={userData.carbs / userData.daily_carbs}
+                progress={
+                  userData.carbs && userData.daily_carbs
+                    ? userData.carbs / userData.daily_carbs
+                    : 0
+                }
                 width={100}
                 color={"#191919"}
                 borderWidth={1}
@@ -159,7 +167,11 @@ const Diary = () => {
             <View className="items-center">
               <Text className="font-jbold text-l">FAT</Text>
               <Progress.Bar
-                progress={userData.fat / userData.daily_fat}
+                progress={
+                  userData.fat && userData.daily_fat
+                    ? userData.fat / userData.daily_fat
+                    : 0
+                }
                 width={100}
                 color={"#191919"}
                 borderWidth={1}
@@ -189,7 +201,7 @@ const Diary = () => {
                   <Image
                     key={i}
                     source={images.waterdroplet}
-                    style={{ width: 45, height: 45 }}
+                    style={{ width: 50, height: 50 }}
                   />
                 ))}
             </View>
