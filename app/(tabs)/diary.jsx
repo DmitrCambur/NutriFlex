@@ -25,6 +25,7 @@ import {
 } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
+import { Player } from "@lordicon/react";
 import {
   calculateDailyIntake,
   saveToDatabase,
@@ -33,12 +34,90 @@ import LottieView from "lottie-react-native";
 import animations from "../../constants/animations";
 import images from "../../constants/images";
 import * as Progress from "react-native-progress";
-import { config, getDocument } from "../../lib/appwrite";
+import {
+  config,
+  getDocument,
+  updateUser,
+  getCurrentUser,
+} from "../../lib/appwrite";
 
 const Diary = () => {
   const [userInfo, setUserInfo] = useContext(UserContext);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({ water: 0 });
+  const [loading, setLoading] = useState(true);
   const [calories, setCalories] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAnimated, setIsAnimated] = useState(Array(6).fill(false));
+
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        console.log("Current user:", user);
+        setCurrentUser(user);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser && currentUser.$id) {
+      getDocument(config.databaseId, currentUser.$collectionId, currentUser.$id)
+        .then((document) => {
+          console.log("Document:", document);
+          setUserData(document);
+          setLoading(false);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    console.log("Loading:", loading);
+    // Check if userData.$id is defined and not empty
+    if (!loading && userData && userData.$id) {
+      updateUser(userData.$id, { water: userData.water })
+        .then((result) => {
+          console.log("Update Result:", result);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  }, [userData, loading, currentUser]);
+
+  const handleWaterDropClick = (index) => {
+    setIsAnimated((prev) => {
+      const newIsAnimated = [...prev];
+      let newWaterValue = 0; // Reset water value
+      if (newIsAnimated[index]) {
+        for (let i = index; i < newIsAnimated.length; i++) {
+          newIsAnimated[i] = false;
+        }
+      } else {
+        for (let i = 0; i <= index; i++) {
+          newIsAnimated[i] = true;
+        }
+      }
+      // Calculate new water value based on the number of filled droplets
+      newWaterValue = newIsAnimated.filter(Boolean).length * 0.5;
+      const newUserData = { ...userData, water: newWaterValue };
+      setUserData(newUserData);
+      return newIsAnimated;
+    });
+  };
+  useEffect(() => {
+    if (isAnimated.some((value) => value)) {
+      playerRef.current?.playFromBeginning();
+    }
+  }, [isAnimated]);
 
   const handleCalories = (value) => {
     setCalories(value);
@@ -56,14 +135,23 @@ const Diary = () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
+
+  const breakfastAnimation = useRef(null);
+  const lunchAnimation = useRef(null);
+  const dinnerAnimation = useRef(null);
+  const snackAnimation = useRef(null);
+  const stretchAnimation = useRef(null);
+
   useEffect(() => {
-    getDocument(config.databaseId, userInfo.$collectionId, userInfo.$id)
-      .then((document) => {
-        setUserData(document);
-        console.log("User data:", document); // using two arguments
-        console.log("User daily calories burned:", document.protein); // Log user's daily calories
-      })
-      .catch((err) => console.error(err));
+    const interval = setInterval(() => {
+      breakfastAnimation.current.play();
+      lunchAnimation.current.play();
+      dinnerAnimation.current.play();
+      snackAnimation.current.play();
+      stretchAnimation.current.play();
+    }, 4000); // 4 seconds
+
+    return () => clearInterval(interval); // cleanup on unmount
   }, []);
 
   let progress = userData.daily_calories
@@ -79,6 +167,12 @@ const Diary = () => {
   };
 
   const color = getColor(progress);
+
+  const totalCalories = userData.daily_calories; // extract daily_calories from user data
+  const breakfastCalories = Math.round(totalCalories * 0.15); // 15% of total
+  const lunchCalories = Math.round(totalCalories * 0.3); // 35% of total
+  const dinnerCalories = Math.round(totalCalories * 0.4); // 35% of total
+  const snackCalories = Math.round(totalCalories * 0.15); // 15% of total
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -197,13 +291,108 @@ const Diary = () => {
             <View className="flex-row mt-2">
               {Array(6)
                 .fill()
-                .map((_, i) => (
-                  <Image
-                    key={i}
-                    source={images.waterdroplet}
-                    style={{ width: 50, height: 50 }}
-                  />
+                .map((_, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleWaterDropClick(index)}
+                  >
+                    {isAnimated[index] ? (
+                      <LottieView
+                        source={animations.waterdropleta}
+                        autoPlay
+                        loop={false}
+                        style={{ width: 50, height: 50 }}
+                      />
+                    ) : (
+                      <Image
+                        source={images.waterdroplet}
+                        style={{ width: 50, height: 50 }}
+                      />
+                    )}
+                  </TouchableOpacity>
                 ))}
+            </View>
+          </View>
+          <View className="flex-col justify-between w-full mt-8 pb-10">
+            <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
+              <LottieView
+                ref={breakfastAnimation}
+                source={animations.breakfast}
+                loop={false}
+                style={{ width: 45, height: 45 }}
+              />
+              <View>
+                <Text className="font-jbold text-l">Breakfast</Text>
+                <Text className="font-jlight text-xs">
+                  Recommended{" "}
+                  <Text className="font-jbold">{breakfastCalories}</Text> -{" "}
+                  <Text className="font-jbold">{breakfastCalories + 100}</Text>{" "}
+                  kcal
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
+              <LottieView
+                ref={lunchAnimation}
+                source={animations.lunch}
+                loop={false}
+                style={{ width: 45, height: 45 }}
+              />
+              <View>
+                <Text className="font-jbold text-l">Lunch</Text>
+                <Text className="font-jlight text-xs">
+                  Recommended{" "}
+                  <Text className="font-jbold">{lunchCalories}</Text> -{" "}
+                  <Text className="font-jbold">{lunchCalories + 100}</Text> kcal
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
+              <LottieView
+                ref={dinnerAnimation}
+                source={animations.dinner}
+                loop={false}
+                style={{ width: 45, height: 45 }}
+              />
+              <View>
+                <Text className="font-jbold text-l">Dinner</Text>
+                <Text className="font-jlight text-xs">
+                  Recommended{" "}
+                  <Text className="font-jbold">{dinnerCalories}</Text> -{" "}
+                  <Text className="font-jbold">{dinnerCalories + 150}</Text>{" "}
+                  kcal
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
+              <LottieView
+                ref={snackAnimation}
+                source={animations.snack}
+                loop={false}
+                style={{ width: 45, height: 45 }}
+              />
+              <View>
+                <Text className="font-jbold text-l">Snacks</Text>
+                <Text className="font-jlight text-xs">
+                  Recommended{" "}
+                  <Text className="font-jbold">{snackCalories}</Text> -{" "}
+                  <Text className="font-jbold">{snackCalories + 50}</Text> kcal
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center border-2 border-secondary p-4">
+              <LottieView
+                ref={stretchAnimation}
+                source={animations.stretch}
+                loop={false}
+                style={{ width: 45, height: 45 }}
+              />
+              <View>
+                <Text className="font-jbold text-l">Exercise</Text>
+                <Text className="font-jlight text-xs">
+                  Recommended <Text className="font-jbold">30</Text> mins
+                </Text>
+              </View>
             </View>
           </View>
         </View>

@@ -14,7 +14,7 @@ const SignIn = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [userInfo, setUserInfo] = useContext(UserContext);
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setGlobalUser, setIsLogged } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
@@ -29,13 +29,11 @@ const SignIn = () => {
     setSubmitting(true);
 
     try {
-      await signIn(form.email, form.password);
-      const result = await getCurrentUser();
-      setUser(result);
+      const user = await signIn(form.email, form.password);
+      setGlobalUser(user);
       setIsLogged(true);
 
-      Alert.alert("Success", "User signed in successfully");
-      router.replace("/home");
+      router.replace("/diary");
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -96,12 +94,15 @@ const SignIn = () => {
             isLoading={isSubmitting}
           />
 
-          <View className="flex justify-center pt-6 flex-row gap-1">
-            <Text className="text-l text-secondary font-jlight pt-1">
+          <View className="justify-center pt-6">
+            <Text className="text-l text-secondary font-jlight pt-1 text-center">
               Don't have an account?
             </Text>
-            <Link href="/sign-up" className="text-lg font-jbold text-secondary">
-              Sign up
+            <Link
+              href="/goal"
+              className="text-lg font-jbold text-secondary text-center"
+            >
+              Get Started
             </Link>
           </View>
         </View>
