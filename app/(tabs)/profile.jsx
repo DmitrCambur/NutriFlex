@@ -11,14 +11,17 @@ import {
   Text,
   TextInput,
   ScrollView,
+  Modal,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
   BackHandler,
   Animated,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
+import DropDownPicker from "react-native-dropdown-picker";
 import {
   useNavigation,
   useRoute,
@@ -26,6 +29,8 @@ import {
 } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
+import Dialog from "react-native-dialog";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Player } from "@lordicon/react";
 import {
   calculateDailyIntake,
@@ -51,6 +56,16 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [openView, setOpenView] = useState(null);
   const [playAnimation, setPlayAnimation] = useState(null);
+
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [activeField, setActiveField] = useState("");
+  const [ethnicityPickerVisible, setEthnicityPickerVisible] = useState(false);
+  const [ethnicity, setEthnicity] = useState(
+    userData ? userData.ethnicity : ""
+  );
 
   const logout = async () => {
     if (isLogged) {
@@ -91,6 +106,124 @@ const Profile = () => {
     return age;
   };
 
+  const handleWeightClick = () => {
+    setActiveField("weight");
+    setDialogVisible(true);
+  };
+
+  const handleHeightClick = () => {
+    setActiveField("height");
+    setDialogVisible(true);
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    console.log("handleDateChange called"); // Log when the function is called
+
+    if (event.type === "set") {
+      // User pressed the "OK" button
+      const currentDate = selectedDate || dateOfBirth;
+      setDateOfBirth(currentDate);
+      handleOk(); // Call the handleOk function
+    }
+    // Hide the date picker after 'OK' or 'Cancel' button is pressed
+    setDatePickerVisible(false);
+  };
+
+  const handleWaistClick = () => {
+    setActiveField("waist");
+    setDialogVisible(true);
+  };
+
+  const handleChestClick = () => {
+    setActiveField("chest");
+    setDialogVisible(true);
+  };
+
+  const handleEthnicityChange = (ethnicity) => {
+    setEthnicity(ethnicity);
+    const newUserData = { ...userData, ethnicity };
+    setUserData(newUserData);
+    setEthnicityPickerVisible(false);
+
+    if (!loading && newUserData && newUserData.$id) {
+      updateUser(newUserData.$id, { ethnicity })
+        .then((result) => {
+          console.log("Update Result:", result);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  };
+
+  const handleGenderChange = () => {
+    const newGender = userData.gender === "male" ? "female" : "male";
+    const newUserData = { ...userData, gender: newGender };
+    setUserData(newUserData);
+
+    if (!loading && newUserData && newUserData.$id) {
+      updateUser(newUserData.$id, { gender: newGender })
+        .then((result) => {
+          console.log("Update Result:", result);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  };
+  const handleOk = () => {
+    let parsedInputValue;
+
+    switch (activeField) {
+      case "goalweight":
+      case "height":
+      case "weight":
+      case "waist":
+      case "chest":
+        parsedInputValue = parseInt(inputValue, 10);
+        break;
+      case "dateOfBirth":
+        const dateObject = new Date(dateOfBirth);
+        parsedInputValue = dateObject.toISOString();
+        console.log("Date of Birth:", parsedInputValue); // Log the date of birth
+        break;
+      default:
+        parsedInputValue = inputValue;
+    }
+
+    const newUserData = { ...userData, [activeField]: parsedInputValue };
+    setUserData(newUserData);
+    setDialogVisible(false);
+
+    if (!loading && newUserData && newUserData.$id) {
+      updateUser(newUserData.$id, { [activeField]: parsedInputValue })
+        .then((result) => {
+          console.log("Update Result:", result);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  };
+
+  const handleAllergyChange = (allergy) => {
+    const newAllergies = userData.allergies.includes(allergy)
+      ? userData.allergies.filter((a) => a !== allergy)
+      : [...userData.allergies, allergy];
+
+    const newUserData = { ...userData, allergies: newAllergies };
+    setUserData(newUserData);
+
+    if (!loading && newUserData && newUserData.$id) {
+      updateUser(newUserData.$id, { allergies: newAllergies })
+        .then((result) => {
+          console.log("Update Result:", result);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.error("User ID is undefined");
+    }
+  };
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
@@ -161,10 +294,7 @@ const Profile = () => {
                       <Text className="font-jbold text-base">Weight</Text>
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Weight`);
-                        }}
+                        onPress={handleWeightClick}
                       >
                         <Text className="text-base font-jbold">
                           {userData.weight} {userData.unit}
@@ -175,10 +305,7 @@ const Profile = () => {
                       <Text className="font-jbold text-base">Height</Text>
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Height`);
-                        }}
+                        onPress={handleHeightClick}
                       >
                         <Text className="text-base font-jbold">
                           {userData.height} {userData.heightUnit}
@@ -194,8 +321,8 @@ const Profile = () => {
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
                         onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Goalweight`);
+                          setActiveField("goalweight");
+                          setDialogVisible(true);
                         }}
                       >
                         <Text className="text-base font-jbold">
@@ -208,39 +335,41 @@ const Profile = () => {
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
                         onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Date of Birth`);
+                          setActiveField("dateOfBirth");
+                          setDatePickerVisible(true);
                         }}
                       >
                         <Text className="text-base font-jbold">
-                          dateofBirth
+                          {calculateAge(userData.dateOfBirth)}
                         </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
+                  {datePickerVisible && (
+                    <DateTimePicker
+                      value={dateOfBirth}
+                      mode="date"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  )}
                   <View className="flex-row justify-between items-center my-2">
                     <View className="flex-1 flex-row justify-between items-center">
-                      <Text className="font-jbold text-base mr-2">Waist</Text>
+                      <Text className="font-jbold text-base">Waist</Text>
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Waist`);
-                        }}
+                        onPress={handleWaistClick}
                       >
                         <Text className="text-base font-jbold">
                           {userData.waist} {userData.heightUnit}
                         </Text>
                       </TouchableOpacity>
                     </View>
-                    <View className="flex-1 flex-row justify-end items-center">
-                      <Text className="font-jbold text-base mr-2">Chest</Text>
+                    <View className="flex-1 flex-row justify-between items-center">
+                      <Text className="font-jbold text-base">Chest</Text>
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Chest`);
-                        }}
+                        onPress={handleChestClick}
                       >
                         <Text className="text-base font-jbold">
                           {userData.chest} {userData.heightUnit}
@@ -255,26 +384,77 @@ const Profile = () => {
                       </Text>
                       <TouchableOpacity
                         className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Ethnicity`);
-                        }}
+                        onPress={() => setEthnicityPickerVisible(true)}
                       >
                         <Text className="text-base font-jbold">
-                          {userData.ethnicity}
+                          {userData ? userData.ethnicity : ""}
                         </Text>
                       </TouchableOpacity>
                     </View>
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={ethnicityPickerVisible}
+                      onRequestClose={() => setEthnicityPickerVisible(false)}
+                    >
+                      <TouchableWithoutFeedback
+                        onPress={() => setEthnicityPickerVisible(false)}
+                      >
+                        <View className="flex-1 justify-center">
+                          <View className="mx-9 p-5 bg-primary border-2 border-secondary">
+                            <Picker
+                              selectedValue={userData ? userData.ethnicity : ""}
+                              onValueChange={handleEthnicityChange}
+                              className="flex-1 h-0 text-left"
+                              itemStyle={{
+                                textAlign: "left",
+                              }}
+                            >
+                              <Picker.Item label="Select ethnicity" value="" />
+                              <Picker.Item
+                                label="European: Germanic (German, Swedish, Dutch, etc.)"
+                                value="european_germanic"
+                              />
+                              <Picker.Item
+                                label="European: Romance (Italian, Spanish, French, etc.)"
+                                value="european_romance"
+                              />
+                              <Picker.Item
+                                label="European: Slavic (Russian, Polish, Ukrainian, etc.)"
+                                value="european_slavic"
+                              />
+                              <Picker.Item
+                                label="Asian: Han Chinese"
+                                value="asian_han_chinese"
+                              />
+                              <Picker.Item
+                                label="Asian: Indian (Hindi, Bengali, Tamil, etc.)"
+                                value="asian_indian"
+                              />
+                              <Picker.Item
+                                label="Asian: Southeast Asian (Thai, Vietnamese, Filipino, etc.)"
+                                value="asian_southeast_asian"
+                              />
+                              <Picker.Item
+                                label="African: North African (Arab-Berber, Egyptian, Sudanese, etc.)"
+                                value="african_north_african"
+                              />
+                              <Picker.Item
+                                label="African: Central African (Bantu, Nilotic, etc.)"
+                                value="african_central_african"
+                              />
+                            </Picker>
+                          </View>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </Modal>
                   </View>
                   <View className="flex-row justify-center items-center my-2">
                     <View className="flex-1 flex-row items-center">
                       <Text className="font-jbold text-base mr-2">Gender</Text>
                       <TouchableOpacity
                         className="w-20 h-10 border-secondary border-2 justify-center items-center mr-4"
-                        onPress={() => {
-                          // Handle the click event here
-                          console.log(`Clicked on Gender`);
-                        }}
+                        onPress={handleGenderChange}
                       >
                         <Text className="text-base font-jbold">
                           {userData.gender}
@@ -282,6 +462,41 @@ const Profile = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
+                  <Dialog.Container
+                    contentStyle={{ borderWidth: 2, borderColor: "secondary" }}
+                    visible={dialogVisible}
+                  >
+                    <Dialog.Title className=" font-jbold text-center mb-5">
+                      Enter your new {activeField}
+                    </Dialog.Title>
+                    <Dialog.Input
+                      className=" font-jlight text-base"
+                      onChangeText={(value) => setInputValue(value)}
+                    ></Dialog.Input>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      <Dialog.Button
+                        label="Cancel"
+                        onPress={() => setDialogVisible(false)}
+                        className=" font-jbold text-base"
+                        style={{
+                          color: "black",
+                        }}
+                      />
+                      <Dialog.Button
+                        label="OK"
+                        onPress={handleOk}
+                        className="font-jbold text-base"
+                        style={{
+                          color: "black",
+                        }}
+                      />
+                    </View>
+                  </Dialog.Container>
                 </View>
               )}
             </View>
@@ -315,60 +530,116 @@ const Profile = () => {
                 <View className="p-2">
                   <View className="flex-row justify-between items-center my-2">
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Gluten`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Gluten")
+                          ? "border-2 bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Gluten")}
                     >
-                      <Text className="font-jbold text-base">Gluten</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Gluten")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Gluten
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Nuts`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Nuts")
+                          ? "border-2  bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Nuts")}
                     >
-                      <Text className="font-jbold text-base">Nuts</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Nuts")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Nuts
+                      </Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Dairy`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Dairy")
+                          ? "border-2  bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Dairy")}
                     >
-                      <Text className="font-jbold text-base">Dairy</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Dairy")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Dairy
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   <View className="flex-row justify-start items-center my-2">
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Egg`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Egg")
+                          ? "border-2 bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Egg")}
                     >
-                      <Text className="font-jbold text-base">Egg</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Egg")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Egg
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Soy`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Soy")
+                          ? "border-2  bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Soy")}
                     >
-                      <Text className="font-jbold text-base">Soy</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Soy")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Soy
+                      </Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
-                      className="flex-1 h-10 border-secondary border-2 justify-center items-center mr-2"
-                      onPress={() => {
-                        // Handle the click event here
-                        console.log(`Clicked on Fish`);
-                      }}
+                      className={`flex-1 h-10 justify-center items-center mr-2 ${
+                        userData.allergies.includes("Fish")
+                          ? "border-2  bg-secondary"
+                          : "border-2 border-secondary bg-primary"
+                      }`}
+                      onPress={() => handleAllergyChange("Fish")}
                     >
-                      <Text className="font-jbold text-base">Fish</Text>
+                      <Text
+                        className={`font-jbold text-base ${
+                          userData.allergies.includes("Fish")
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      >
+                        Fish
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
