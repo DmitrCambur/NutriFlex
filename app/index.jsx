@@ -3,11 +3,26 @@ import { View, Text, Image, ScrollView } from "react-native";
 import { Redirect, router, Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "../constants/images";
+import React, { useEffect } from "react";
 import animations from "../constants/animations";
 import LottieView from "lottie-react-native";
 import CustomButton from "../components/CustomButton";
+import { checkSession } from "../lib/appwrite";
 
 export default function App() {
+  useEffect(() => {
+    // Check the session status when the component is mounted
+    const checkSessionStatus = async () => {
+      const sessionActive = await checkSession();
+
+      if (sessionActive) {
+        // If a session is active, redirect the user to the /diary page
+        router.push("/diary");
+      }
+    };
+
+    checkSessionStatus();
+  }, []);
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
