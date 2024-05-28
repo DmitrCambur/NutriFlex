@@ -12,6 +12,7 @@ import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import progress from "../assets/icons/progress.png";
 import recipes from "../assets/icons/recipes.png";
+import filter from "../assets/icons/filter.png";
 
 export default {
   progress,
@@ -28,4 +29,5 @@ export default {
   logout,
   eyeHide,
   eye,
+  filter,
 };

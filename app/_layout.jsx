@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import UserProvider from "../components/UserProvider";
 import GlobalProvider from "../context/GlobalProvider";
+import RecipeProvider from "../context/RecipeProvider";
 SplashScreen.preventAutoHideAsync();
 
 const RootLayoot = () => {
@@ -31,15 +32,17 @@ const RootLayoot = () => {
   return (
     <GlobalProvider>
       <UserProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="search/[query]"
-            options={{ headerShown: false }}
-          />
-        </Stack>
+        <RecipeProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="search/[query]"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+        </RecipeProvider>
       </UserProvider>
     </GlobalProvider>
   );
