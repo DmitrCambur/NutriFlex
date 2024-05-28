@@ -15,6 +15,7 @@ import bell from "../assets/animations/bell.json";
 import fridge from "../assets/animations/fridge.json";
 import personavatar from "../assets/animations/personavatar.json";
 import gluten from "../assets/animations/gluten.json";
+import plus from "../assets/animations/plus.json";
 
 export default {
   blackbackground,
@@ -34,4 +35,5 @@ export default {
   fridge,
   personavatar,
   gluten,
+  plus,
 };

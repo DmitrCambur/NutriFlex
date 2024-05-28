@@ -1,10 +1,19 @@
-import { useContext } from "react";
+import { useContext, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import RecipeContext from "../context/RecipeContext";
 import icons from "../constants/icons";
+import animations from "../constants/animations";
+import LottieView from "lottie-react-native";
 
 const RecipeDetails = ({ onBack }) => {
   const { selectedRecipe } = useContext(RecipeContext);
+  const plusAnimation = useRef(null);
+  const [hasPlayed, setHasPlayed] = useState(false);
+
+  const onPlus = () => {
+    plusAnimation.current.play(0, 60); // Assuming your animation is 60 frames
+    console.log("Plus icon was pressed");
+  };
 
   // Get the screen height
   const screenHeight = Dimensions.get("window").height;
@@ -24,6 +33,14 @@ const RecipeDetails = ({ onBack }) => {
           source={icons.leftArrow}
           className="w-7 h-6 ml-2"
           tintColor="white"
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onPlus} className="absolute top-4 right-2">
+        <LottieView
+          ref={plusAnimation}
+          source={animations.plus}
+          loop={false}
+          className="w-7 h-6 mr-2"
         />
       </TouchableOpacity>
       <View className="mt-auto text-left ml-3">
