@@ -13,6 +13,8 @@ import eye from "../assets/icons/eye.png";
 import progress from "../assets/icons/progress.png";
 import recipes from "../assets/icons/recipes.png";
 import filter from "../assets/icons/filter.png";
+import minus from "../assets/icons/minus.png";
+import trash from "../assets/icons/trash.png";
 
 export default {
   progress,
@@ -30,4 +32,6 @@ export default {
   eyeHide,
   eye,
   filter,
+  minus,
+  trash,
 };

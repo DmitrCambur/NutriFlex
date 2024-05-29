@@ -13,8 +13,10 @@ import {
   TouchableOpacity,
   Image,
   BackHandler,
+  Modal,
   Animated,
 } from "react-native";
+import MealDetails from "../../components/MealDetails";
 import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
@@ -48,6 +50,8 @@ const Diary = () => {
   const [calories, setCalories] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAnimated, setIsAnimated] = useState(Array(6).fill(false));
+  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const playerRef = useRef(null);
 
@@ -63,7 +67,7 @@ const Diary = () => {
     };
 
     fetchCurrentUser();
-  }, []);
+  }, [refreshKey]);
 
   useEffect(() => {
     if (currentUser && currentUser.$id) {
@@ -71,11 +75,11 @@ const Diary = () => {
         .then((document) => {
           console.log("Document:", document);
           setUserData(document);
+          setCalories(document.calories || 0); // Set the calories state with the user's calories
           setLoading(false);
         })
         .catch((err) => console.error(err));
     } else {
-      console.error("User ID is undefined");
     }
   }, [currentUser]);
 
@@ -89,7 +93,6 @@ const Diary = () => {
         })
         .catch((err) => console.error(err));
     } else {
-      console.error("User ID is undefined");
     }
   }, [userData, loading, currentUser]);
 
@@ -122,9 +125,22 @@ const Diary = () => {
   const handleCalories = (value) => {
     setCalories(value);
   };
+
+  const handleCaloriesConsumed = (value) => {
+    setCalories((prevCalories) => prevCalories + value);
+  };
+
+  const handleCaloriesBurned = (value) => {
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      caloriesBurned: (prevUserData.caloriesBurned || 0) + value,
+    }));
+  };
+
   const remainingCalories = userData.daily_calories
     ? userData.daily_calories - calories
     : 0;
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => true;
@@ -177,20 +193,29 @@ const Diary = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
+        {selectedMeal && (
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={selectedMeal !== null}
+            onRequestClose={() => setSelectedMeal(null)}
+          >
+            <MealDetails
+              meal={selectedMeal}
+              onClose={() => {
+                setSelectedMeal(null);
+                setRefreshKey((oldKey) => oldKey + 1); // Increment refreshKey to trigger a refresh
+              }}
+            />
+          </Modal>
+        )}
         <View className="w-full flex-col items-center justify-start min-h-[85vh] px-8">
           <Image
             source={images.logo}
             className="w-[200px] h-[200px] mt-[-50px]"
             resizeMode="contain"
           />
-          <View className="flex-row justify-between w-full mt-[-40px] items-center">
-            <View className="items-center">
-              <View className="flex-row items-end">
-                <Text className="font-jbold text-3xl">{calories}</Text>
-                <Text className="font-jlight text-xs mb-1 ml-1">kcal</Text>
-              </View>
-              <Text className="font-jlight text-l">EATEN</Text>
-            </View>
+          <View className="flex-col items-center w-full mt-[-40px]">
             <View className="items-center relative">
               <Progress.Circle
                 progress={progress}
@@ -205,14 +230,23 @@ const Diary = () => {
                 <Text className="font-jlight text-xl mb-1 ml-1">KCAL LEFT</Text>
               </View>
             </View>
-            <View className="items-center">
-              <View className="flex-row items-end">
-                <Text className="font-jbold text-3xl">
-                  {userData.caloriesBurned}
-                </Text>
-                <Text className="font-jlight text-xs mb-1 ml-1">kcal</Text>
+            <View className="flex-row justify-between w-full items-center mt-[-20px]">
+              <View className="items-center">
+                <View className="flex-row items-end">
+                  <Text className="font-jbold text-3xl">{calories}</Text>
+                  <Text className="font-jlight text-xs mb-1 ml-1">kcal</Text>
+                </View>
+                <Text className="font-jlight text-l">EATEN</Text>
               </View>
-              <Text className="font-jlight text-l">BURNED</Text>
+              <View className="items-center">
+                <View className="flex-row items-end">
+                  <Text className="font-jbold text-3xl">
+                    {userData.caloriesBurned}
+                  </Text>
+                  <Text className="font-jlight text-xs mb-1 ml-1">kcal</Text>
+                </View>
+                <Text className="font-jlight text-l">BURNED</Text>
+              </View>
             </View>
           </View>
           <View className="flex-row justify-around w-full mt-8 items-center border-2 border-secondary p-3">
@@ -314,7 +348,10 @@ const Diary = () => {
             </View>
           </View>
           <View className="flex-col justify-between w-full mt-8 pb-10">
-            <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
+            <TouchableOpacity
+              className="flex-row items-center border-2 border-secondary p-4 mb-2"
+              onPress={() => setSelectedMeal("Breakfast")}
+            >
               <LottieView
                 ref={breakfastAnimation}
                 source={animations.breakfast}
@@ -330,7 +367,7 @@ const Diary = () => {
                   kcal
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
             <View className="flex-row items-center border-2 border-secondary p-4 mb-2">
               <LottieView
                 ref={lunchAnimation}

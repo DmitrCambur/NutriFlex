@@ -161,7 +161,7 @@ const Recipes = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <ScrollView className="h-full">
+      <ScrollView>
         {showRecipeDetails ? (
           <RecipeDetails onBack={() => setShowRecipeDetails(false)} />
         ) : (
