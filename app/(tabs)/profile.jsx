@@ -205,11 +205,19 @@ const Profile = () => {
       console.error("User ID is undefined");
     }
   };
-
+  const allergyToHealthLabel = {
+    Gluten: "gluten-free",
+    Nuts: "peanut-free",
+    Dairy: "dairy-free",
+    Egg: "egg-free",
+    Soy: "soy-free",
+    Fish: "fish-free",
+  };
   const handleAllergyChange = (allergy) => {
-    const newAllergies = userData.allergies.includes(allergy)
-      ? userData.allergies.filter((a) => a !== allergy)
-      : [...userData.allergies, allergy];
+    const healthLabel = allergyToHealthLabel[allergy];
+    const newAllergies = userData.allergies.includes(healthLabel)
+      ? userData.allergies.filter((a) => a !== healthLabel)
+      : [...userData.allergies, healthLabel];
 
     const newUserData = { ...userData, allergies: newAllergies };
     setUserData(newUserData);
@@ -531,7 +539,7 @@ const Profile = () => {
                   <View className="flex-row justify-between items-center my-2">
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Gluten")
+                        userData.allergies.includes("gluten-free")
                           ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -539,7 +547,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Gluten")
+                          userData.allergies.includes("gluten-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}
@@ -549,7 +557,7 @@ const Profile = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Nuts")
+                        userData.allergies.includes("peanut-free")
                           ? "border-2  bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -557,7 +565,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Nuts")
+                          userData.allergies.includes("peanut-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}
@@ -568,7 +576,7 @@ const Profile = () => {
 
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Dairy")
+                        userData.allergies.includes("dairy-free")
                           ? "border-2  bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -576,7 +584,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Dairy")
+                          userData.allergies.includes("dairy-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}
@@ -588,7 +596,7 @@ const Profile = () => {
                   <View className="flex-row justify-start items-center my-2">
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Egg")
+                        userData.allergies.includes("egg-free")
                           ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -596,7 +604,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Egg")
+                          userData.allergies.includes("egg-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}
@@ -606,7 +614,7 @@ const Profile = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Soy")
+                        userData.allergies.includes("soy-free")
                           ? "border-2  bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -614,7 +622,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Soy")
+                          userData.allergies.includes("soy-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}
@@ -625,7 +633,7 @@ const Profile = () => {
 
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
-                        userData.allergies.includes("Fish")
+                        userData.allergies.includes("fish-free")
                           ? "border-2  bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
@@ -633,7 +641,7 @@ const Profile = () => {
                     >
                       <Text
                         className={`font-jbold text-base ${
-                          userData.allergies.includes("Fish")
+                          userData.allergies.includes("fish-free")
                             ? "text-primary"
                             : "text-secondary"
                         }`}

@@ -55,6 +55,7 @@ const Recipes = () => {
         setUserData((prevState) => ({
           ...prevState,
           daily_calories: user.daily_calories,
+          allergies: user.allergies,
         }));
         console.log("User's daily calories:", user.daily_calories); // Log the daily_calories value
       } catch (err) {
@@ -100,27 +101,54 @@ const Recipes = () => {
     console.log("Dinner calories range:", dinnerCaloriesRange);
     console.log("Snack calories range:", snackCaloriesRange);
 
+    const filterRecipesByAllergies = (recipes, allergies) => {
+      return recipes.filter((recipe) => {
+        const ingredients = recipe.recipe.ingredientLines
+          .join(" ")
+          .toLowerCase();
+        return !allergies.some((allergy) =>
+          ingredients.includes(allergy.toLowerCase())
+        );
+      });
+    };
+
     fetchRecipes(query, ["Breakfast"], breakfastCaloriesRange, selectedFilters)
       .then((data) => {
-        setBreakfastRecipes(data.hits);
+        const filteredRecipes = filterRecipesByAllergies(
+          data.hits,
+          userData.allergies
+        );
+        setBreakfastRecipes(filteredRecipes);
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Lunch"], lunchCaloriesRange, selectedFilters)
       .then((data) => {
-        setLunchRecipes(data.hits);
+        const filteredRecipes = filterRecipesByAllergies(
+          data.hits,
+          userData.allergies
+        );
+        setLunchRecipes(filteredRecipes);
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Dinner"], dinnerCaloriesRange, selectedFilters)
       .then((data) => {
-        setDinnerRecipes(data.hits);
+        const filteredRecipes = filterRecipesByAllergies(
+          data.hits,
+          userData.allergies
+        );
+        setDinnerRecipes(filteredRecipes);
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Snack"], snackCaloriesRange, selectedFilters)
       .then((data) => {
-        setSnackRecipes(data.hits);
+        const filteredRecipes = filterRecipesByAllergies(
+          data.hits,
+          userData.allergies
+        );
+        setSnackRecipes(filteredRecipes);
       })
       .catch((error) => console.error("Error:", error));
   }, [query, selectedFilters, userData]);

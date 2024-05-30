@@ -1,5 +1,6 @@
 import { View, Text, Image } from "react-native";
 import { Redirect, Tabs } from "expo-router";
+import React, { useState } from "react";
 
 import icons from "../../constants/icons";
 
@@ -23,6 +24,20 @@ const TabIcon = ({ icon, color, name, focused }) => {
 };
 
 const TabsLayout = () => {
+  const [keys, setKeys] = useState({
+    diary: 0,
+    progress: 0,
+    recipes: 0,
+    profile: 0,
+  });
+
+  const incrementKey = (tabName) => {
+    setKeys((prevKeys) => ({
+      ...prevKeys,
+      [tabName]: prevKeys[tabName] + 1,
+    }));
+  };
+
   return (
     <>
       <Tabs
@@ -40,6 +55,7 @@ const TabsLayout = () => {
       >
         <Tabs.Screen
           name="diary"
+          key={`diary-${keys.diary}`}
           options={{
             title: "Diary",
             headerShown: false,
@@ -52,9 +68,13 @@ const TabsLayout = () => {
               />
             ),
           }}
+          listeners={{
+            focus: () => incrementKey("diary"),
+          }}
         />
         <Tabs.Screen
           name="progress"
+          key={`progress-${keys.progress}`}
           options={{
             title: "Progress",
             headerShown: false,
@@ -67,9 +87,13 @@ const TabsLayout = () => {
               />
             ),
           }}
+          listeners={{
+            focus: () => incrementKey("progress"),
+          }}
         />
         <Tabs.Screen
           name="recipes"
+          key={`recipes-${keys.recipes}`}
           options={{
             title: "Recipes",
             headerShown: false,
@@ -82,9 +106,13 @@ const TabsLayout = () => {
               />
             ),
           }}
+          listeners={{
+            focus: () => incrementKey("recipes"),
+          }}
         />
         <Tabs.Screen
           name="profile"
+          key={`profile-${keys.profile}`}
           options={{
             title: "Profile",
             headerShown: false,
@@ -96,6 +124,9 @@ const TabsLayout = () => {
                 focused={focused}
               />
             ),
+          }}
+          listeners={{
+            focus: () => incrementKey("profile"),
           }}
         />
       </Tabs>
