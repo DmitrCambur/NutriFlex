@@ -6,14 +6,6 @@ import {
   Image,
   Button,
 } from "react-native";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 import { useContext, useState, useEffect } from "react";
 import {
   UserContext,
@@ -23,6 +15,7 @@ import {
   transferUserDataToDailyEntries,
   listDocuments,
 } from "../../lib/appwrite";
+import { BarChart } from "react-native-gifted-charts";
 import LottieView from "lottie-react-native";
 import animations from "../../constants/animations";
 import images from "../../constants/images";
@@ -40,6 +33,18 @@ const Progress = () => {
     {
       name: "Goal Weight",
       value: userData.goalweight,
+    },
+  ];
+  const dummyData = [
+    {
+      value: 75,
+      label: "Current Weight",
+      color: "skyblue",
+    },
+    {
+      value: 60,
+      label: "Goal Weight",
+      color: "green",
     },
   ];
 
@@ -161,7 +166,9 @@ const Progress = () => {
             <Text className="text-lg font-jbold mt-4">WEIGHT GOAL</Text>
             <View className="border-2 border-secondary p-3 mt-2 flex-col justify-between items-center">
               <View className="w-full">
-                {/* Add content for the first view section here */}
+                <BarChart
+                  data={dummyData.map((item) => ({ value: item.value }))}
+                />
               </View>
               <View className="w-full mt-2">
                 {/* Add content for the second view section here */}
