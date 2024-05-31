@@ -11,15 +11,17 @@ export async function fetchRecipes(query, mealType, calories, dietLabels) {
     const response = await fetch(url);
     const data = await response.json();
     // Calculate calories per serving for each recipe
-    data.hits = data.hits.map((hit) => ({
-      ...hit,
-      recipe: {
-        ...hit.recipe,
-        calories: hit.recipe.calories / hit.recipe.yield,
-      },
-    }));
+    if (data.hits) {
+      data.hits = data.hits.map((hit) => ({
+        ...hit,
+        recipe: {
+          ...hit.recipe,
+          calories: hit.recipe.calories / hit.recipe.yield,
+        },
+      }));
+    }
     return data;
   } catch (error) {
-    console.error("Error:", error);
+    return { error };
   }
 }

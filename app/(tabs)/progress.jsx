@@ -11,8 +11,8 @@ import {
   Area,
   XAxis,
   YAxis,
-  Tooltip,
   CartesianGrid,
+  Tooltip,
 } from "recharts";
 import { useContext, useState, useEffect } from "react";
 import {
@@ -21,6 +21,7 @@ import {
   getDocument,
   config,
   transferUserDataToDailyEntries,
+  listDocuments,
 } from "../../lib/appwrite";
 import LottieView from "lottie-react-native";
 import animations from "../../constants/animations";
@@ -57,6 +58,14 @@ const Progress = () => {
       try {
         const user = await getCurrentUser();
         setCurrentUser(user);
+        console.log(`User $createdAt: ${user.$createdAt}`); // Log the $createdAt attribute of the user
+
+        // Set streak and longeststreak to the state
+        setUserData((prevState) => ({
+          ...prevState,
+          streak: user.streak,
+          longeststreak: user.longeststreak,
+        }));
       } catch (err) {
         console.error(err);
       }
@@ -67,11 +76,42 @@ const Progress = () => {
 
   useEffect(() => {
     if (currentUser && currentUser.$id) {
-      getDocument(config.databaseId, currentUser.$collectionId, currentUser.$id)
+      // Fetch all documents where the user field is equal to currentUser.$id
+      listDocuments(
+        config.databaseId,
+        config.dailyEntriesCollectionId,
+        currentUser.$id
+      )
+        .then((documents) => {
+          if (documents.length > 0) {
+            console.log(`Fetched ${documents.length} documents`);
+            // Log the weight and date of each document
+            documents.forEach((doc) => {
+              console.log(
+                `Document ID: ${doc.$id}, Date: ${doc.date}, Weight: ${doc.weight}`
+              );
+            });
+          } else {
+            console.log("No documents found for user", currentUser.$id);
+          }
+        })
+        .catch((err) => console.error(err));
+
+      // Assume you have a documentId to fetch
+      const documentId = "66589d79001e34abf62a";
+      getDocument(
+        config.databaseId,
+        config.dailyEntriesCollectionId,
+        documentId
+      )
         .then((document) => {
-          setUserData(document);
-          console.log("Weight:", document.weight);
-          console.log("Goal Weight:", document.goalweight);
+          if (document) {
+            console.log(`Document Weight:`, document.weight);
+            // Set userData to the fetched document
+            setUserData(document);
+          } else {
+            console.log("No document found with id", documentId);
+          }
           setLoading(false);
         })
         .catch((err) => console.error(err));

@@ -114,46 +114,75 @@ const Recipes = () => {
 
     fetchRecipes(query, ["Breakfast"], breakfastCaloriesRange, selectedFilters)
       .then((data) => {
-        const filteredRecipes = filterRecipesByAllergies(
-          data.hits,
-          userData.allergies
-        );
-        setBreakfastRecipes(filteredRecipes);
+        if (data.error) {
+          console.error("Error fetching recipes:", data.error);
+        } else if (data.hits) {
+          const filteredRecipes = filterRecipesByAllergies(
+            data.hits,
+            userData.allergies
+          );
+          setBreakfastRecipes(filteredRecipes);
+        } else {
+          console.error("No data returned from fetchRecipes");
+        }
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Lunch"], lunchCaloriesRange, selectedFilters)
       .then((data) => {
-        const filteredRecipes = filterRecipesByAllergies(
-          data.hits,
-          userData.allergies
-        );
-        setLunchRecipes(filteredRecipes);
+        if (data.error) {
+          console.error("Error fetching recipes:", data.error);
+        } else if (data.hits) {
+          const filteredRecipes = filterRecipesByAllergies(
+            data.hits,
+            userData.allergies
+          );
+          setLunchRecipes(filteredRecipes);
+        } else {
+          console.error("No data returned from fetchRecipes");
+        }
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Dinner"], dinnerCaloriesRange, selectedFilters)
       .then((data) => {
-        const filteredRecipes = filterRecipesByAllergies(
-          data.hits,
-          userData.allergies
-        );
-        setDinnerRecipes(filteredRecipes);
+        if (data.error) {
+          console.error("Error fetching recipes:", data.error);
+        } else if (data.hits) {
+          const filteredRecipes = filterRecipesByAllergies(
+            data.hits,
+            userData.allergies
+          );
+          setDinnerRecipes(filteredRecipes);
+        } else {
+          console.error("No data returned from fetchRecipes");
+        }
       })
       .catch((error) => console.error("Error:", error));
 
     fetchRecipes(query, ["Snack"], snackCaloriesRange, selectedFilters)
       .then((data) => {
-        const filteredRecipes = filterRecipesByAllergies(
-          data.hits,
-          userData.allergies
-        );
-        setSnackRecipes(filteredRecipes);
+        if (data.error) {
+          console.error("Error fetching recipes:", data.error);
+        } else if (data.hits) {
+          const filteredRecipes = filterRecipesByAllergies(
+            data.hits,
+            userData.allergies
+          );
+          setSnackRecipes(filteredRecipes);
+        } else {
+          console.error("No data returned from fetchRecipes");
+        }
       })
       .catch((error) => console.error("Error:", error));
   }, [query, selectedFilters, userData]);
 
   const renderRecipes = (recipes) => {
+    if (!recipes) {
+      console.error("No recipes to render");
+      return null;
+    }
+
     const uniqueRecipes = [
       ...new Set(recipes.map((recipe) => recipe.recipe.label)),
     ];
