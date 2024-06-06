@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
@@ -32,26 +33,31 @@ const Height = () => {
     console.log(route.params.dateOfBirth);
   }, []);
   const navigateToNextPage = () => {
+    const height = unit === "cm" ? heightCm : heightFtIn;
+    const heightInCm = unit === "cm" ? height : convertHeight("cm", height);
+
+    if (heightInCm < 135 || heightInCm > 240) {
+      alert("Height must be between 135cm and 240cm");
+      return;
+    }
+
     setUserInfo({
       ...userInfo,
-      height: unit === "cm" ? heightCm : heightFtIn,
+      height: height,
       heightUnit: unit,
     });
-    if (unit === "cm" ? heightCm : heightFtIn) {
-      navigation.navigate("ethnicity", {
-        goal: userInfo.goal,
-        weight: userInfo.weight,
-        unit: userInfo.unit,
-        goalweight: userInfo.goalweight,
-        goalweightUnit: userInfo.goalweightUnit,
-        gender: userInfo.gender,
-        dateOfBirth: userInfo.dateOfBirth,
-        height: unit === "cm" ? heightCm : heightFtIn,
-        heightUnit: unit,
-      });
-    } else {
-      alert("Please enter your height");
-    }
+
+    navigation.navigate("ethnicity", {
+      goal: userInfo.goal,
+      weight: userInfo.weight,
+      unit: userInfo.unit,
+      goalweight: userInfo.goalweight,
+      goalweightUnit: userInfo.goalweightUnit,
+      gender: userInfo.gender,
+      dateOfBirth: userInfo.dateOfBirth,
+      height: height,
+      heightUnit: unit,
+    });
   };
 
   const handleUnitChange = (newUnit) => {

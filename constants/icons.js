@@ -15,6 +15,7 @@ import recipes from "../assets/icons/recipes.png";
 import filter from "../assets/icons/filter.png";
 import minus from "../assets/icons/minus.png";
 import trash from "../assets/icons/trash.png";
+import info from "../assets/icons/info.png";
 
 export default {
   progress,
@@ -34,4 +35,5 @@ export default {
   filter,
   minus,
   trash,
+  info,
 };

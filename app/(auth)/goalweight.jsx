@@ -29,6 +29,29 @@ const GoalWeight = () => {
 
   const navigateToNextPage = () => {
     if (goalWeight) {
+      // Convert goalWeight and current weight to the same unit for comparison
+      let currentWeightInGoalUnit = userInfo.weight;
+      if (userInfo.currentWeightUnit !== unit) {
+        currentWeightInGoalUnit = convertWeight(
+          userInfo.weight,
+          userInfo.currentWeightUnit,
+          unit
+        );
+      }
+
+      // Check if the goal weight is valid based on the goal
+      if (
+        (route.params.goal === "gain_weight" &&
+          parseFloat(goalWeight) <= currentWeightInGoalUnit) ||
+        (route.params.goal === "lose_weight" &&
+          parseFloat(goalWeight) >= currentWeightInGoalUnit)
+      ) {
+        alert(
+          "Invalid goal weight. Please enter a goal weight that aligns with your current weight & goal."
+        );
+        return;
+      }
+
       const updatedUserInfo = {
         ...userInfo,
         goalweight: goalWeight,

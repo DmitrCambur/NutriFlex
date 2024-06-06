@@ -1,5 +1,12 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import React, { useContext } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Modal,
+} from "react-native";
+import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Redirect, router } from "expo-router";
@@ -10,6 +17,7 @@ import UserContext from "../../context/UserContext"; // replace with the actual 
 const Goal = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useContext(UserContext);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleGoalSelect = (goal) => {
     setUserInfo({
@@ -50,17 +58,48 @@ const Goal = () => {
               ))}
             </View>
           </View>
-          <Text className="text-2xl font-jbold my-10 text-center">
-            What goal do you have in mind?
-          </Text>
+          <View className="my-10">
+            <View className="flex-row items-center flex-wrap justify-center">
+              <Text className="text-2xl font-jbold">
+                What goal do you have in
+              </Text>
+              <View className="flex-row items-center">
+                <Text className="text-2xl font-jbold">mind?</Text>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <Image source={icons.info} className="w-5 h-5 ml-1 mb-2" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View className="flex-1 items-center justify-start">
+                <View
+                  className="m-4 p-4 bg-primary border-b-2 border-secondary flex-col justify-between"
+                  style={{ height: "30%", width: "100%" }}
+                >
+                  <Text className="font-jbold text-center">
+                    Here is some information...
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(!modalVisible)}
+                    className="mt-4 p-3 bg-secondary font-jbold self-center"
+                    style={{ width: "40%" }}
+                  >
+                    <Text className="text-white text-center">Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
           <CustomButton
             title="Gain weight"
             handlePress={() => handleGoalSelect("gain_weight")}
-            containerStyles="mt-10"
-          />
-          <CustomButton
-            title="Maintain weight"
-            handlePress={() => handleGoalSelect("maintain_weight")}
             containerStyles="mt-10"
           />
           <CustomButton

@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -34,6 +41,21 @@ const Dof = () => {
   const handleDateOfBirthSelect = () => {
     const dateOfBirthString = date.toISOString(); // Convert date to a string
 
+    // Calculate the age
+    const today = new Date();
+    const birthDate = new Date(dateOfBirthString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    // Check if age is between 14 and 90
+    if (age < 14 || age > 90) {
+      Alert.alert("Invalid age", "Age must be between 14 and 90.");
+      return;
+    }
+
     setUserInfo({
       ...userInfo,
       dateOfBirth: dateOfBirthString,
@@ -51,6 +73,7 @@ const Dof = () => {
       dateOfBirth: dateOfBirthString,
     });
   };
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
