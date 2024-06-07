@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -80,11 +81,19 @@ const Ethnicity = () => {
             Select the ethnicity from the list that most closely resembles you
           </Text>
           <View className="flex-1 justify-center w-full px-10">
-            <View className="flex-row border border-secondary mb-5 py-4">
+            <View
+              className={`flex-row mb-5 py-4 ${
+                Platform.OS === "ios" ? "" : "border border-secondary"
+              }`}
+            >
               <Picker
                 selectedValue={selectedEthnicity}
                 onValueChange={(itemValue) => setSelectedEthnicity(itemValue)}
-                style={{ flex: 1, height: 0, textAlign: "left" }}
+                style={{
+                  flex: 1,
+                  height: Platform.OS === "ios" ? 250 : 0,
+                  textAlign: "left",
+                }}
                 itemStyle={{ textAlign: "left" }}
               >
                 <Picker.Item label="Select ethnicity" value="" />

@@ -119,60 +119,66 @@ const BodyMeasurements = ({ onClose }) => {
   }, [currentUser]);
 
   return (
-    <View className="flex-1 bg-white justify-start items-center">
-      <View className="flex-row items-center justify-center p-5 bg-secondary">
-        <TouchableOpacity onPress={onClose}>
-          <Image
-            source={icons.leftArrow}
-            className="w-8 h-6"
-            tintColor="white"
-          />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-3xl font-jbold ml-2 text-primary">
-            Body Measurements
-          </Text>
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView>
+        <View className="flex-1 bg-white justify-start items-center">
+          <View className="flex-row items-center justify-center p-5 bg-secondary">
+            <TouchableOpacity onPress={onClose}>
+              <Image
+                source={icons.leftArrow}
+                className="w-8 h-6"
+                tintColor="white"
+              />
+            </TouchableOpacity>
+            <View className="flex-1 items-center">
+              <Text className="text-3xl font-jbold ml-2 text-primary">
+                Body Measurements
+              </Text>
+            </View>
+          </View>
+          <View className="w-full p-5">
+            <Text className="text-2xl font-jbold text-secondary mt-5">BMI</Text>
+            <View className="w-full pt-2 ml-[-10px] mt-4">
+              <LineChart
+                areaChart
+                thickness={6}
+                isAnimated
+                color="#191919"
+                animationDuration={800}
+                data={currentData}
+                startFillColor="#191919"
+                startOpacity={0.8}
+                noOfSections={7}
+                endFillColor="#FFFFFF"
+                spacing={33}
+                initialSpacing={1}
+                endOpacity={0.3}
+              />
+            </View>
+            <Text className="text-2xl font-jbold text-secondary mt-5">
+              Protein
+            </Text>
+            <View className="w-full pt-2 ml-[-10px] mt-4">
+              <LineChart
+                areaChart
+                thickness={6}
+                isAnimated
+                color="#191919"
+                animationDuration={800}
+                data={proteinData}
+                startFillColor="#191919"
+                startOpacity={0.8}
+                noOfSections={7}
+                endFillColor="#FFFFFF"
+                spacing={33}
+                initialSpacing={1}
+                endOpacity={0.3}
+              />
+            </View>
+          </View>
         </View>
-      </View>
-      <View className="w-full p-5">
-        <Text className="text-2xl font-jbold text-secondary mt-5">BMI</Text>
-        <View className="w-full pt-2 ml-[-10px] mt-4">
-          <LineChart
-            areaChart
-            thickness={6}
-            isAnimated
-            color="#191919"
-            animationDuration={800}
-            data={currentData}
-            startFillColor="#191919"
-            startOpacity={0.8}
-            noOfSections={7}
-            endFillColor="#FFFFFF"
-            spacing={33}
-            initialSpacing={1}
-            endOpacity={0.3}
-          />
-        </View>
-        <Text className="text-2xl font-jbold text-secondary mt-5">Protein</Text>
-        <View className="w-full pt-2 ml-[-10px] mt-4">
-          <LineChart
-            areaChart
-            thickness={6}
-            isAnimated
-            color="#191919"
-            animationDuration={800}
-            data={proteinData}
-            startFillColor="#191919"
-            startOpacity={0.8}
-            noOfSections={7}
-            endFillColor="#FFFFFF"
-            spacing={33}
-            initialSpacing={1}
-            endOpacity={0.3}
-          />
-        </View>
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

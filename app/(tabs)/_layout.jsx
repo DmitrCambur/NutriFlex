@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Platform } from "react-native";
 import { Redirect, Tabs } from "expo-router";
 import React, { useState } from "react";
 
@@ -49,7 +49,7 @@ const TabsLayout = () => {
             backgroundColor: "#191919",
             borderTopWidth: 1,
             borderTopColor: "#191919",
-            height: 65,
+            height: Platform.OS === "ios" ? 100 : 65,
           },
         }}
       >

@@ -41,7 +41,8 @@
     "react-native-svg": "^15.2.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-router-dom": "^6.23.1",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "expo-updates": "~0.25.16"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
