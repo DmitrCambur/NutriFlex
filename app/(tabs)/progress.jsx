@@ -23,6 +23,7 @@ import LottieView from "lottie-react-native";
 import animations from "../../constants/animations";
 import images from "../../constants/images";
 import icons from "../../constants/icons";
+import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
 const Progress = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -151,8 +152,8 @@ const Progress = () => {
       <ScrollView>
         <View className="w-full flex-col items-center justify-start min-h-[85vh] px-8">
           <Image
-            source={images.logo}
-            className="w-[200px] h-[200px]"
+            source={bganimation}
+            className="w-[240px] h-[200px]"
             resizeMode="contain"
           />
           <View className="w-full mt-[-40px]">

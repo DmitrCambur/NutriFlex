@@ -2,13 +2,14 @@
   "expo": {
     "name": "NutriFlex",
     "slug": "NutriFlex",
+    "description": "NutriFlex is a mobile application that helps you to track your daily nutrition intake and provides you with a personalized diet plan.",
     "scheme": "NutriFlex",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logologo.png",
+    "icon": "./assets/images/whitelogosmall.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/logologo.png",
+      "image": "./assets/images/logologologo.png",
       "resizeMode": "contain",
       "backgroundColor": "#F5F5F5"
     },
@@ -19,7 +20,7 @@
     "android": {
       "package": "com.dmitr.nutriflex",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logoiconname.png",
+        "foregroundImage": "./assets/images/logologologo.png",
         "backgroundColor": "#F5F5F5"
       }
     },

@@ -42,6 +42,7 @@ import {
   updateUser,
   getCurrentUser,
 } from "../../lib/appwrite";
+import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
 const Diary = () => {
   const [userInfo, setUserInfo] = useContext(UserContext);
@@ -211,8 +212,8 @@ const Diary = () => {
         )}
         <View className="w-full flex-col items-center justify-start min-h-[85vh] px-8">
           <Image
-            source={images.logo}
-            className="w-[200px] h-[200px] mt-[-50px]"
+            source={bganimation}
+            className="w-[240px] h-[200px] mt-[-50px]"
             resizeMode="contain"
           />
           <View className="flex-col items-center w-full mt-[-40px]">

@@ -84,7 +84,12 @@ const Goal = () => {
                   style={{ height: "30%", width: "100%" }}
                 >
                   <Text className="font-jbold text-center">
-                    Here is some information...
+                    To provide you with the most accurate calculations and
+                    recommendations, we need to know your goal. Whether you're
+                    looking to lose weight, gain muscle, maintain your current
+                    weight, or simply improve your overall health, your goal
+                    will guide our calculations. Please share your goal so we
+                    can tailor our services to your needs.
                   </Text>
                   <TouchableOpacity
                     onPress={() => setModalVisible(!modalVisible)}

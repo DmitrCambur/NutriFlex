@@ -47,6 +47,7 @@ import {
   updateUser,
   deleteCurrentSession,
 } from "../../lib/appwrite";
+import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
 const Profile = () => {
   const { userGlobal, setGlobalUser, setIsLogged, isLogged } =
@@ -237,8 +238,8 @@ const Profile = () => {
       <ScrollView>
         <View className="w-full flex-col items-center justify-start min-h-[85vh] px-8">
           <Image
-            source={images.logo}
-            className="w-[200px] h-[200px] mt-[-50px]"
+            source={bganimation}
+            className="w-[240px] h-[200px] mt-[-50px]"
             resizeMode="contain"
           />
           {!loading && userData && (

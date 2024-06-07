@@ -9,6 +9,7 @@ import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { getCurrentUser, signIn } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
 const SignIn = () => {
   const navigation = useNavigation();
@@ -63,9 +64,9 @@ const SignIn = () => {
           }}
         >
           <Image
-            source={images.logo}
+            source={bganimation}
             resizeMode="contain"
-            className="w-[300px] h-[100px] items-center justify-center"
+            className="w-[350px] h-[200px] items-center justify-center mb-[-40px]"
           />
 
           <Text className="text-3xl text-secondary mt-3 font-jbold">

@@ -16,6 +16,7 @@ import { getCurrentUser } from "../../lib/appwrite";
 import RecipeContext from "../../context/RecipeContext";
 import RecipeDetails from "../../components/RecipeDetails";
 import { Link } from "react-router-dom";
+import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
 const Recipes = () => {
   const [query, setQuery] = useState("");
@@ -224,8 +225,8 @@ const Recipes = () => {
         ) : (
           <View className="w-full flex-col items-center justify-start min-h-[85vh] px-8">
             <Image
-              source={images.logo}
-              className="w-[200px] h-[200px] mt-[-50px]"
+              source={bganimation}
+              className="w-[240px] h-[200px] mt-[-50px]"
               resizeMode="contain"
             />
             <View className="flex flex-row items-center bg-secondary border-2 border-secondary h-11 mt-[-40px]">

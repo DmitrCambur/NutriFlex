@@ -16,6 +16,7 @@ import fridge from "../assets/animations/fridge.json";
 import personavatar from "../assets/animations/personavatar.json";
 import gluten from "../assets/animations/gluten.json";
 import plus from "../assets/animations/plus.json";
+import bganimation from "../assets/animations/nutriflexgif.gif";
 
 export default {
   blackbackground,

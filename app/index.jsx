@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import images from "../constants/images";
 import React, { useEffect } from "react";
 import animations from "../constants/animations";
+import bganimation from "../assets/animations/nutriflexgiff.gif";
 import LottieView from "lottie-react-native";
 import CustomButton from "../components/CustomButton";
 import { checkSession } from "../lib/appwrite";
@@ -24,18 +25,21 @@ export default function App() {
     checkSessionStatus();
   }, []);
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary h-full flex justify-between">
       <ScrollView
         contentContainerStyle={{
-          height: "100%",
+          flexGrow: 1,
+          justifyContent: "space-between",
         }}
       >
-        <View className="w-full flex justify-center items-center min-h-[85vh] px-4">
+        <View className="w-full flex justify-center items-center flex-grow px-4 mt-20">
           <Image
-            source={images.logo}
-            className="w-[300px] h-[300px]"
+            source={bganimation}
+            className="w-[400px] h-72"
             resizeMode="contain"
           />
+        </View>
+        <View className="w-full flex justify-center items-center mb-12">
           <CustomButton
             title="GET STARTED"
             handlePress={() => router.push("/goal")}
