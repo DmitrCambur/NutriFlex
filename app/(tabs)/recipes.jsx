@@ -101,8 +101,11 @@ const Recipes = () => {
     console.log("Lunch calories range:", lunchCaloriesRange);
     console.log("Dinner calories range:", dinnerCaloriesRange);
     console.log("Snack calories range:", snackCaloriesRange);
-
     const filterRecipesByAllergies = (recipes, allergies) => {
+      if (!allergies) {
+        return recipes;
+      }
+
       return recipes.filter((recipe) => {
         const ingredients = recipe.recipe.ingredientLines
           .join(" ")

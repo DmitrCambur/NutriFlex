@@ -18,6 +18,7 @@ import {
   BackHandler,
   Animated,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
@@ -206,6 +207,16 @@ const Profile = () => {
       console.error("User ID is undefined");
     }
   };
+
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-secondary p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const allergyToHealthLabel = {
     Gluten: "gluten-free",
     Nuts: "peanut-free",
@@ -216,9 +227,10 @@ const Profile = () => {
   };
   const handleAllergyChange = (allergy) => {
     const healthLabel = allergyToHealthLabel[allergy];
-    const newAllergies = userData.allergies.includes(healthLabel)
-      ? userData.allergies.filter((a) => a !== healthLabel)
-      : [...userData.allergies, healthLabel];
+    const isAllergyAdded = !userData.allergies.includes(healthLabel);
+    const newAllergies = isAllergyAdded
+      ? [...userData.allergies, healthLabel]
+      : userData.allergies.filter((a) => a !== healthLabel);
 
     const newUserData = { ...userData, allergies: newAllergies };
     setUserData(newUserData);
@@ -232,6 +244,8 @@ const Profile = () => {
     } else {
       console.error("User ID is undefined");
     }
+
+    return isAllergyAdded;
   };
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -544,7 +558,27 @@ const Profile = () => {
                           ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Gluten")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Gluten");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Gluten', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Gluten', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -559,10 +593,30 @@ const Profile = () => {
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
                         userData.allergies.includes("peanut-free")
-                          ? "border-2  bg-secondary"
+                          ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Nuts")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Nuts");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Nuts', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Nuts', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -578,10 +632,30 @@ const Profile = () => {
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
                         userData.allergies.includes("dairy-free")
-                          ? "border-2  bg-secondary"
+                          ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Dairy")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Dairy");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Dairy', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Dairy', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -601,7 +675,27 @@ const Profile = () => {
                           ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Egg")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Egg");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Egg', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Egg', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -616,10 +710,30 @@ const Profile = () => {
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
                         userData.allergies.includes("soy-free")
-                          ? "border-2  bg-secondary"
+                          ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Soy")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Soy");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Soy', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Soy', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -635,10 +749,30 @@ const Profile = () => {
                     <TouchableOpacity
                       className={`flex-1 h-10 justify-center items-center mr-2 ${
                         userData.allergies.includes("fish-free")
-                          ? "border-2  bg-secondary"
+                          ? "border-2 bg-secondary"
                           : "border-2 border-secondary bg-primary"
                       }`}
-                      onPress={() => handleAllergyChange("Fish")}
+                      onPress={() => {
+                        const isAllergyAdded = handleAllergyChange("Fish");
+                        Toast.hide();
+                        if (isAllergyAdded) {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Fish', has been applied 👍",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        } else {
+                          Toast.show({
+                            text1: "Hello,",
+                            text2:
+                              "Your dietary preference 'Fish', has been removed 🙌",
+                            type: "customToast",
+                            position: "top",
+                          });
+                        }
+                      }}
                     >
                       <Text
                         className={`font-jbold text-base ${
@@ -692,6 +826,7 @@ const Profile = () => {
           />
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };
