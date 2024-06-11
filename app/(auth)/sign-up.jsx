@@ -10,6 +10,7 @@ import FormField from "../../components/FormField";
 import { createUser } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import bganimation from "../../assets/animations/nutriflexgiff.gif";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -24,9 +25,28 @@ const SignUp = () => {
     password: "",
   });
 
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all fields");
+      Toast.show({
+        text1: "Error",
+        text2: "Please fill in all fields.",
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
+      return;
     }
     setSubmitting(true);
     try {
@@ -74,7 +94,16 @@ const SignUp = () => {
         routes: [{ name: "results", params: { userInfo: result } }],
       });
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Toast.show({
+        text1: "Error",
+        text2: error.message,
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -150,6 +179,7 @@ const SignUp = () => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

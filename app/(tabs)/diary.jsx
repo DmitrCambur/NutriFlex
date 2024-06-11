@@ -14,6 +14,7 @@ import {
   Image,
   BackHandler,
   Modal,
+  Button,
   Animated,
 } from "react-native";
 import MealDetails from "../../components/MealDetails";
@@ -41,6 +42,7 @@ import {
   getDocument,
   updateUser,
   getCurrentUser,
+  transferUserDataToDailyEntries,
 } from "../../lib/appwrite";
 import bganimation from "../../assets/animations/nutriflexgiff.gif";
 
@@ -53,6 +55,7 @@ const Diary = () => {
   const [isAnimated, setIsAnimated] = useState(Array(6).fill(false));
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [refresh, setRefresh] = useState(false);
 
   const playerRef = useRef(null);
 
@@ -70,6 +73,10 @@ const Diary = () => {
     fetchCurrentUser();
   }, [refreshKey]);
 
+  useEffect(() => {
+    // This function will be called whenever 'refresh' changes
+    // You can put any additional logic you need here
+  }, [refresh]);
   useEffect(() => {
     if (currentUser && currentUser.$id) {
       getDocument(config.databaseId, currentUser.$collectionId, currentUser.$id)
@@ -139,9 +146,8 @@ const Diary = () => {
   };
 
   const remainingCalories = userData.daily_calories
-    ? userData.daily_calories - calories
+    ? Math.max(0, userData.daily_calories - calories)
     : 0;
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => true;
@@ -432,6 +438,15 @@ const Diary = () => {
                 </Text>
               </View>
             </View>
+            <CustomButton
+              containerStyles="mt-10"
+              title="LOG PROGRESS"
+              handlePress={async () => {
+                console.log("Button pressed");
+                await transferUserDataToDailyEntries();
+                setRefresh((prev) => !prev); // Toggle 'refresh' to trigger a re-render
+              }}
+            />
           </View>
         </View>
       </ScrollView>

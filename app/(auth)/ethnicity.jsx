@@ -14,6 +14,7 @@ import CustomButton from "../../components/CustomButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
+import Toast from "react-native-toast-message";
 
 const Ethnicity = () => {
   const [currentPage, setCurrentPage] = useState(8); // Assuming this is the second page
@@ -34,6 +35,15 @@ const Ethnicity = () => {
     console.log(route.params.heightUnit);
   }, []);
 
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const navigateToNextPage = () => {
     const updatedUserInfo = {
       ...userInfo,
@@ -43,7 +53,16 @@ const Ethnicity = () => {
     if (selectedEthnicity) {
       navigation.navigate("sign-up", updatedUserInfo);
     } else {
-      alert("Please select your ethnicity");
+      Toast.show({
+        text1: "Selection Required",
+        text2: "Please select your ethnicity.",
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
     }
   };
   return (
@@ -135,6 +154,7 @@ const Ethnicity = () => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

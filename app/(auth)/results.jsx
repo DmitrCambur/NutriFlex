@@ -137,18 +137,6 @@ const Results = () => {
     }, [])
   );
 
-  //   useEffect(() => {
-  //     console.log(route.params.goal);
-  //     console.log(route.params.weight);
-  //     console.log(route.params.unit);
-  //     console.log(route.params.goalweight);
-  //     console.log(route.params.goalweightUnit);
-  //     console.log(route.params.gender);
-  //     console.log(route.params.dateOfBirth);
-  //     console.log(route.params.height);
-  //     console.log(route.params.heightUnit);
-  //   }, []);
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>

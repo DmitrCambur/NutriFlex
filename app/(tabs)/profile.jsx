@@ -118,19 +118,6 @@ const Profile = () => {
     setDialogVisible(true);
   };
 
-  const handleDateChange = (event, selectedDate) => {
-    console.log("handleDateChange called"); // Log when the function is called
-
-    if (event.type === "set") {
-      // User pressed the "OK" button
-      const currentDate = selectedDate || dateOfBirth;
-      setDateOfBirth(currentDate);
-      handleOk(); // Call the handleOk function
-    }
-    // Hide the date picker after 'OK' or 'Cancel' button is pressed
-    setDatePickerVisible(false);
-  };
-
   const handleWaistClick = () => {
     setActiveField("waist");
     setDialogVisible(true);
@@ -141,37 +128,34 @@ const Profile = () => {
     setDialogVisible(true);
   };
 
+  const handleDateChange = (event, selectedDate) => {
+    console.log("handleDateChange called"); // Log when the function is called
+
+    if (event.type === "set") {
+      // User pressed the "OK" button
+      const currentDate = selectedDate || dateOfBirth;
+      setDateOfBirth(currentDate);
+      setActiveField("dateOfBirth");
+      handleOk(); // Call the handleOk function
+    }
+    // Hide the date picker after 'OK' or 'Cancel' button is pressed
+    setDatePickerVisible(false);
+  };
+
   const handleEthnicityChange = (ethnicity) => {
     setEthnicity(ethnicity);
     const newUserData = { ...userData, ethnicity };
     setUserData(newUserData);
     setEthnicityPickerVisible(false);
-
-    if (!loading && newUserData && newUserData.$id) {
-      updateUser(newUserData.$id, { ethnicity })
-        .then((result) => {
-          console.log("Update Result:", result);
-        })
-        .catch((err) => console.error(err));
-    } else {
-      console.error("User ID is undefined");
-    }
+    setActiveField("ethnicity");
+    handleOk();
   };
 
   const handleGenderChange = () => {
-    const newGender = userData.gender === "male" ? "female" : "male";
-    const newUserData = { ...userData, gender: newGender };
-    setUserData(newUserData);
-
-    if (!loading && newUserData && newUserData.$id) {
-      updateUser(newUserData.$id, { gender: newGender })
-        .then((result) => {
-          console.log("Update Result:", result);
-        })
-        .catch((err) => console.error(err));
-    } else {
-      console.error("User ID is undefined");
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      gender: prevState.gender === "Male" ? "Female" : "Male",
+    }));
   };
   const handleOk = () => {
     let parsedInputValue;
@@ -187,7 +171,13 @@ const Profile = () => {
       case "dateOfBirth":
         const dateObject = new Date(dateOfBirth);
         parsedInputValue = dateObject.toISOString();
-        console.log("Date of Birth:", parsedInputValue); // Log the date of birth
+        console.log("Date of Birth:", parsedInputValue);
+        break;
+      case "ethnicity":
+        parsedInputValue = ethnicity; // Use the ethnicity value
+        break;
+      case "gender":
+        parsedInputValue = userData.gender; // Use the gender value
         break;
       default:
         parsedInputValue = inputValue;
@@ -201,13 +191,29 @@ const Profile = () => {
       updateUser(newUserData.$id, { [activeField]: parsedInputValue })
         .then((result) => {
           console.log("Update Result:", result);
+
+          // Recalculate daily nutrient intake if weight, height, goal weight, date of birth, ethnicity, or gender was updated
+          if (
+            [
+              "weight",
+              "height",
+              "goalweight",
+              "dateOfBirth",
+              "ethnicity",
+              "gender",
+            ].includes(activeField)
+          ) {
+            const dailyIntake = calculateDailyIntake(newUserData);
+            saveToDatabase(newUserData.$id, dailyIntake)
+              .then(() => console.log("Daily intake updated"))
+              .catch((err) => console.error(err));
+          }
         })
         .catch((err) => console.error(err));
     } else {
       console.error("User ID is undefined");
     }
   };
-
   const toastConfig = {
     customToast: ({ text1, text2 }) => (
       <View className="h-full w-full bg-secondary p-4">

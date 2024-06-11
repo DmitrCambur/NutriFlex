@@ -13,6 +13,8 @@ import { Redirect, router } from "expo-router";
 import CustomButton from "../../components/CustomButton";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
+import Toast from "react-native-toast-message";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Dof = () => {
@@ -38,6 +40,15 @@ const Dof = () => {
     console.log(route.params.gender);
   }, []);
 
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const handleDateOfBirthSelect = () => {
     const dateOfBirthString = date.toISOString(); // Convert date to a string
 
@@ -52,7 +63,16 @@ const Dof = () => {
 
     // Check if age is between 14 and 90
     if (age < 14 || age > 90) {
-      Alert.alert("Invalid age", "Age must be between 14 and 90.");
+      Toast.show({
+        text1: "Invalid Age",
+        text2: "Age must be between 14 and 90.",
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
       return;
     }
 
@@ -73,7 +93,6 @@ const Dof = () => {
       dateOfBirth: dateOfBirthString,
     });
   };
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
@@ -136,6 +155,7 @@ const Dof = () => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

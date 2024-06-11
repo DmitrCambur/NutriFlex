@@ -13,6 +13,7 @@ import CustomButton from "../../components/CustomButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import icons from "../../constants/icons";
 import UserContext from "../../context/UserContext";
+import Toast from "react-native-toast-message";
 
 const Height = () => {
   const [heightCm, setHeightCm] = useState("");
@@ -32,12 +33,31 @@ const Height = () => {
     console.log(route.params.gender);
     console.log(route.params.dateOfBirth);
   }, []);
+
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const navigateToNextPage = () => {
     const height = unit === "cm" ? heightCm : heightFtIn;
     const heightInCm = unit === "cm" ? height : convertHeight("cm", height);
 
     if (heightInCm < 135 || heightInCm > 240) {
-      alert("Height must be between 135cm and 240cm");
+      Toast.show({
+        text1: "Invalid Height",
+        text2: "Height must be between 135 cm and 240 cm.",
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
       return;
     }
 
@@ -59,7 +79,6 @@ const Height = () => {
       heightUnit: unit,
     });
   };
-
   const handleUnitChange = (newUnit) => {
     if (newUnit === "cm") {
       const [feet, inches] = heightFtIn.split("/").map(Number);
@@ -176,6 +195,7 @@ const Height = () => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

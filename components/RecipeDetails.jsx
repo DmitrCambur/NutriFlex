@@ -5,12 +5,28 @@ import icons from "../constants/icons";
 import animations from "../constants/animations";
 import LottieView from "lottie-react-native";
 import UserContext from "../context/UserContext";
+import Toast from "react-native-toast-message";
 import {
   config,
   getDocument,
   updateUser,
   getCurrentUser,
 } from "../lib/appwrite";
+
+const toastConfig = {
+  customToast: ({ text1, text2 }) => (
+    <View className="h-full w-full bg-green p-4">
+      <Text className="text-white font-jbold">{text1}</Text>
+      <Text className="text-white font-jlight">{text2}</Text>
+    </View>
+  ),
+  customToastSecondary: ({ text1, text2 }) => (
+    <View className="h-full w-full bg-secondary p-4">
+      <Text className="text-white font-jbold">{text1}</Text>
+      <Text className="text-white font-jlight">{text2}</Text>
+    </View>
+  ),
+};
 
 const RecipeDetails = ({ onBack }) => {
   const { selectedRecipe } = useContext(RecipeContext);
@@ -70,11 +86,31 @@ const RecipeDetails = ({ onBack }) => {
         currentMeals.some((meal) => JSON.parse(meal).id === simplifiedRecipe.id)
       ) {
         console.log("Recipe is already saved");
+
+        // Display a toast message
+        Toast.show({
+          text1: "Oops!",
+          text2: "Recipe already saved",
+          type: "customToastSecondary",
+          position: "top",
+          topOffset: 0,
+        });
+
         return;
       }
+
       // Add the new recipe to the meals array
       const updatedMeals = [...currentMeals, recipeString];
       console.log("Recipe added successfully");
+
+      // Display a toast message
+      Toast.show({
+        text1: "Success",
+        text2: "Recipe has been added",
+        type: "customToast",
+        position: "top",
+        topOffset: 0,
+      });
 
       // Update the userInfo state
       const newUserInfo = { ...userInfo, meals: updatedMeals };
@@ -83,7 +119,6 @@ const RecipeDetails = ({ onBack }) => {
       console.error("userInfo is undefined");
     }
   };
-
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -227,6 +262,7 @@ const RecipeDetails = ({ onBack }) => {
           </View>
         ))}
       </View>
+      <Toast config={toastConfig} />
     </View>
   );
 };

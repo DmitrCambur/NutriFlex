@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -27,6 +28,15 @@ const GoalWeight = () => {
     console.log(route.params.currentWeightUnit);
   }, []);
 
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
+
   const navigateToNextPage = () => {
     if (goalWeight) {
       // Convert goalWeight and current weight to the same unit for comparison
@@ -46,9 +56,17 @@ const GoalWeight = () => {
         (route.params.goal === "lose_weight" &&
           parseFloat(goalWeight) >= currentWeightInGoalUnit)
       ) {
-        alert(
-          "Invalid goal weight. Please enter a goal weight that aligns with your current weight & goal."
-        );
+        Toast.show({
+          text1: "Invalid Goal Weight",
+          text2:
+            "Please enter a goal weight that aligns with your current weight & goal.",
+          type: "customToast",
+          position: "bottom",
+          visibilityTime: 4000,
+          autoHide: true,
+          topOffset: 10,
+          bottomOffset: 0,
+        });
         return;
       }
 
@@ -68,7 +86,16 @@ const GoalWeight = () => {
         goalweightUnit: unit,
       });
     } else {
-      alert("Please enter your weight");
+      Toast.show({
+        text1: "Missing Weight",
+        text2: "Please enter your goal weight",
+        type: "customToast",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 10,
+        bottomOffset: 0,
+      });
     }
   };
 
@@ -207,6 +234,7 @@ const GoalWeight = () => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

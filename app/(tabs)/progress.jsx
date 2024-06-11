@@ -163,7 +163,7 @@ const Progress = () => {
                 <View className="flex-col items-center">
                   <View className="flex-row items-center">
                     <Text className="text-3xl font-jbold p-2">
-                      {userData.streak}
+                      {/* {userData.streak} */} 5
                     </Text>
                     <Text className="text-3xl ml-1 font-jbold">Days</Text>
                   </View>
@@ -177,7 +177,7 @@ const Progress = () => {
                 <View className="flex-col items-center">
                   <View className="flex-row items-center mr-4">
                     <Text className="text-3xl font-jbold p-2">
-                      {userData.longeststreak}
+                      {/* {userData.longeststreak} */} 5
                     </Text>
                     <Text className="text-3xl ml-1 font-jbold">Days</Text>
                   </View>

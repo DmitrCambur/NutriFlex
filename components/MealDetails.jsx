@@ -20,6 +20,7 @@ import {
   getCurrentUser,
 } from "../lib/appwrite";
 import * as Progress from "react-native-progress";
+import Toast from "react-native-toast-message";
 
 const MealDetails = ({ meal, onClose }) => {
   const [userInfo, setUserInfo] = useContext(UserContext);
@@ -30,6 +31,27 @@ const MealDetails = ({ meal, onClose }) => {
   useEffect(() => {
     setUserState(userInfo);
   }, [userInfo]);
+
+  const toastConfig = {
+    customToast: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-green p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+    customToastSecondary: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-secondary p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+    customToastThird: ({ text1, text2 }) => (
+      <View className="h-full w-full bg-red p-4">
+        <Text className="text-white font-jbold">{text1}</Text>
+        <Text className="text-white font-jlight">{text2}</Text>
+      </View>
+    ),
+  };
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -255,6 +277,17 @@ const MealDetails = ({ meal, onClose }) => {
                                       "User's updated nutritional info:",
                                       updatedUserInfo
                                     ); // Log user's updated nutritional info
+
+                                    // Display a toast message
+                                    Toast.show({
+                                      text1: "Success",
+                                      text2:
+                                        "Meal has been added to your daily intake",
+                                      type: "customToast",
+                                      position: "top",
+                                      topOffset: 0,
+                                    });
+
                                     // Update the local state if necessary
                                   } catch (error) {
                                     console.error(
@@ -284,23 +317,52 @@ const MealDetails = ({ meal, onClose }) => {
                                       fat: userInfo.fat,
                                     }
                                   ); // Log user's current nutritional info
+
+                                  // Check if any nutritional value is already at 0
+                                  if (
+                                    userInfo.calories === 0 ||
+                                    userInfo.protein === 0 ||
+                                    userInfo.carbs === 0 ||
+                                    userInfo.fat === 0
+                                  ) {
+                                    // Display a toast message
+                                    Toast.show({
+                                      text1: "Warning",
+                                      text2:
+                                        "Nutritional values cannot go under 0.",
+                                      type: "customToastThird",
+                                      position: "top",
+                                      topOffset: 0,
+                                    });
+                                    return; // Return early from the function
+                                  }
+
                                   const updatedUserInfo = {
-                                    calories: userInfo.calories - meal.calories,
-                                    protein:
+                                    calories: Math.max(
+                                      0,
+                                      userInfo.calories - meal.calories
+                                    ),
+                                    protein: Math.max(
+                                      0,
                                       userInfo.protein -
-                                      Math.round(
-                                        parseFloat(meal.nutrients.protein)
-                                      ),
-                                    carbs:
+                                        Math.round(
+                                          parseFloat(meal.nutrients.protein)
+                                        )
+                                    ),
+                                    carbs: Math.max(
+                                      0,
                                       userInfo.carbs -
-                                      Math.round(
-                                        parseFloat(meal.nutrients.carbs)
-                                      ),
-                                    fat:
+                                        Math.round(
+                                          parseFloat(meal.nutrients.carbs)
+                                        )
+                                    ),
+                                    fat: Math.max(
+                                      0,
                                       userInfo.fat -
-                                      Math.round(
-                                        parseFloat(meal.nutrients.fat)
-                                      ),
+                                        Math.round(
+                                          parseFloat(meal.nutrients.fat)
+                                        )
+                                    ),
                                   };
                                   try {
                                     await updateUser(
@@ -313,6 +375,16 @@ const MealDetails = ({ meal, onClose }) => {
                                       "User's updated nutritional info:",
                                       updatedUserInfo
                                     ); // Log user's updated nutritional info
+
+                                    // Display a toast message
+                                    Toast.show({
+                                      text1: "Success",
+                                      text2: "Meal has been removed.",
+                                      type: "customToastSecondary",
+                                      position: "top",
+                                      topOffset: 0,
+                                    });
+
                                     // Update the local state if necessary
                                   } catch (error) {
                                     console.error(
@@ -351,6 +423,15 @@ const MealDetails = ({ meal, onClose }) => {
                                     updatedMeals
                                   ); // Log updated meals
                                   // Update the local state if necessary
+
+                                  // Display toast message
+                                  Toast.show({
+                                    text1: "Success",
+                                    text2: "Meal has been successfully deleted",
+                                    type: "customToastThird",
+                                    position: "top",
+                                    topOffset: 0,
+                                  });
                                 } catch (error) {
                                   console.error("Error deleting meal:", error);
                                 }
@@ -374,6 +455,7 @@ const MealDetails = ({ meal, onClose }) => {
           </View>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };
