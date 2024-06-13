@@ -27,3 +27,4 @@ NutriFlex is a health and fitness application designed to help users track their
 
 #
 #### Made by Dmitr Cambur
+#### Expo & Appwrite logic from the tutorial: https://www.youtube.com/watch?v=ZBCUegTZF7M
